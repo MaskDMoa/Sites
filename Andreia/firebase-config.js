@@ -3,13 +3,13 @@
 
 // ===== FIREBASE CONFIG =====
 const firebaseConfig = {
-    apiKey: "AIzaSyCNdTKD7ggyBkOyvXiG_u87MsoQ8Eb43vw",
-    authDomain: "andreia-d1835.firebaseapp.com",
-    projectId: "andreia-d1835",
-    storageBucket: "andreia-d1835.firebasestorage.app",
-    messagingSenderId: "270653165429",
-    appId: "1:270653165429:web:99670bd7697f5ee348cd3c",
-    measurementId: "G-MJ5CF6S1MC"
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
 };
 
 // Initialize Firebase
