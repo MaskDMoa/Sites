@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medidor de Aura ✨</title>
+    <meta name="description"
+        content="Descubra o nível da sua aura! Escolha uma categoria e revele sua energia cósmica.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #121230;
+            --accent-purple: #9b59f0;
+            --accent-pink: #e84393;
+            --accent-blue: #6c5ce7;
+            --accent-cyan: #00cec9;
+            --accent-gold: #fdcb6e;
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0cc;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .bg-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .nebula-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-purple), transparent);
+            top: -150px;
+            right: -100px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .nebula-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-pink), transparent);
+            bottom: -100px;
+            left: -100px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .nebula-3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, var(--accent-cyan), transparent);
+            top: 40%;
+            left: 50%;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -20px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px var(--accent-purple));
+            }
+
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 30px var(--accent-purple));
+            }
+        }
+
+        .header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Screens */
+        .screen {
+            width: 100%;
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Category Cards */
+        .categories-title {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .category-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--card-color1), var(--card-color2));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .category-card:hover::before {
+            opacity: 0.15;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--card-color1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 30px color-mix(in srgb, var(--card-color1) 30%, transparent);
+        }
+
+        .category-card>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-emoji {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        /* Input Screen */
+        .input-screen {
+            max-width: 550px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .back-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .input-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 35px;
+            backdrop-filter: blur(20px);
+        }
+
+        .input-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-header .card-emoji {
+            font-size: 56px;
+        }
+
+        .input-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .input-header p {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .input-group input[type="text"],
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(155, 89, 240, 0.2);
+        }
+
+        .input-group select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--accent-purple);
+            background: rgba(155, 89, 240, 0.05);
+        }
+
+        .file-upload-area.has-file {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 206, 201, 0.05);
+        }
+
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .upload-text strong {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .preview-img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(155, 89, 240, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            text-align: center;
+        }
+
+        .loading-screen.active {
+            display: flex;
+        }
+
+        .loading-orb {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--accent-purple), var(--accent-pink), var(--accent-blue));
+            animation: orb-pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 60px rgba(155, 89, 240, 0.5);
+            margin-bottom: 30px;
+        }
+
+        @keyframes orb-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 60px rgba(155, 89, 240, 0.5);
+            }
+
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 100px rgba(155, 89, 240, 0.8);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+
+            25% {
+                content: '.';
+            }
+
+            50% {
+                content: '..';
+            }
+
+            75% {
+                content: '...';
+            }
+        }
+
+        /* Result Screen */
+        .result-screen {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .result-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 35px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--result-color), transparent, var(--result-color), transparent);
+            animation: rotate-border 4s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate-border {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .result-card>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-label {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .aura-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .aura-circle .glow-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--result-color);
+            animation: ring-pulse 2s ease-in-out infinite;
+        }
+
+        .aura-circle .glow-ring:nth-child(2) {
+            width: 130%;
+            height: 130%;
+            opacity: 0.5;
+            animation-delay: 0.5s;
+        }
+
+        .aura-circle .glow-ring:nth-child(3) {
+            width: 160%;
+            height: 160%;
+            opacity: 0.2;
+            animation-delay: 1s;
+        }
+
+        @keyframes ring-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: var(--ring-opacity, 0.5);
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: calc(var(--ring-opacity, 0.5) + 0.2);
+            }
+        }
+
+        .aura-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--result-color), var(--result-color2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .aura-number .unit {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .aura-tier {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--result-color);
+        }
+
+        .aura-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .aura-bar-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            height: 14px;
+            width: 100%;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .aura-bar {
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--result-color), var(--result-color2));
+            width: 0%;
+            transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--result-color);
+        }
+
+        .aura-traits {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .aura-trait {
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .retry-btn,
+        .share-btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .retry-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .retry-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(155, 89, 240, 0.4);
+        }
+
+        /* Particles on result */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 3s ease-out infinite;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .input-card {
+                padding: 25px 20px;
+            }
+
+            .result-card {
+                padding: 35px 20px;
+            }
+
+            .aura-number {
+                font-size: 3rem;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-stars" id="stars"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-icon">🔮</div>
+            <h1>Medidor de Aura</h1>
+            <p>Descubra o nível da sua energia cósmica</p>
+        </header>
+
+        <!-- Screen 1: Category Selection -->
+        <div class="screen active" id="screen-categories">
+            <p class="categories-title">Escolha uma categoria para revelar sua aura</p>
+            <div class="categories-grid">
+                <div class="category-card" data-category="frase" style="--card-color1: #9b59f0; --card-color2: #6c5ce7;"
+                    onclick="selectCategory('frase')">
+                    <span class="card-emoji">💬</span>
+                    <h3 class="card-title">Frase Pessoal</h3>
+                    <p class="card-desc">Sua frase favorita ou lema de vida revela muito sobre sua aura</p>
+                </div>
+                <div class="category-card" data-category="foto" style="--card-color1: #e84393; --card-color2: #fd79a8;"
+                    onclick="selectCategory('foto')">
+                    <span class="card-emoji">📸</span>
+                    <h3 class="card-title">Foto</h3>
+                    <p class="card-desc">Envie uma foto e descubra a energia que ela transmite</p>
+                </div>
+                <div class="category-card" data-category="personagem"
+                    style="--card-color1: #00cec9; --card-color2: #81ecec;" onclick="selectCategory('personagem')">
+                    <span class="card-emoji">🦸</span>
+                    <h3 class="card-title">Personagem Favorito</h3>
+                    <p class="card-desc">O personagem que você admira diz muito sobre sua aura</p>
+                </div>
+                <div class="category-card" data-category="musica"
+                    style="--card-color1: #fdcb6e; --card-color2: #f39c12;" onclick="selectCategory('musica')">
+                    <span class="card-emoji">🎵</span>
+                    <h3 class="card-title">Música Favorita</h3>
+                    <p class="card-desc">A trilha sonora da sua vida carrega sua frequência energética</p>
+                </div>
+                <div class="category-card" data-category="signo" style="--card-color1: #a29bfe; --card-color2: #6c5ce7;"
+                    onclick="selectCategory('signo')">
+                    <span class="card-emoji">♈</span>
+                    <h3 class="card-title">Signo</h3>
+                    <p class="card-desc">As estrelas revelam a intensidade da sua aura</p>
+                </div>
+                <div class="category-card" data-category="emoji" style="--card-color1: #55efc4; --card-color2: #00b894;"
+                    onclick="selectCategory('emoji')">
+                    <span class="card-emoji">😎</span>
+                    <h3 class="card-title">Emoji Favorito</h3>
+                    <p class="card-desc">O emoji que mais te representa esconde poderes cósmicos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Input -->
+        <div class="screen" id="screen-input">
+            <div class="input-screen">
+                <button class="back-btn" onclick="goBack()">← Voltar</button>
+                <div class="input-card">
+                    <div class="input-header">
+                        <span class="card-emoji" id="input-emoji"></span>
+                        <h2 id="input-title"></h2>
+                        <p id="input-subtitle"></p>
+                    </div>
+                    <div id="input-area"></div>
+                    <button class="submit-btn" id="submit-btn" onclick="measureAura()" disabled>
+                        ✨ Revelar Minha Aura ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Loading -->
+        <div class="loading-screen" id="screen-loading">
+            <div class="loading-orb"></div>
+            <p class="loading-text">Analisando sua energia cósmica<span class="loading-dots"></span></p>
+        </div>
+
+        <!-- Screen 4: Result -->
+        <div class="screen" id="screen-result">
+            <div class="result-screen">
+                <div class="result-card" id="result-card">
+                    <p class="result-label">Seu Nível de Aura</p>
+                    <div class="aura-circle" id="aura-circle">
+                        <div class="glow-ring" style="--ring-opacity: 1;"></div>
+                        <div class="glow-ring"></div>
+                        <div class="glow-ring"></div>
+                        <span class="aura-number"><span id="aura-value">0</span><span class="unit">/100</span></span>
+                    </div>
+                    <h2 class="aura-tier" id="aura-tier"></h2>
+                    <p class="aura-description" id="aura-desc"></p>
+                    <div class="aura-bar-container">
+                        <div class="aura-bar" id="aura-bar"></div>
+                    </div>
+                    <div class="aura-traits" id="aura-traits"></div>
+                    <div class="result-actions">
+                        <button class="retry-btn" onclick="goBack()">🔄 Tentar Outra</button>
+                        <button class="share-btn" onclick="tryAgain()">🏠 Início</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Stars Background ==========
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+                star.style.animationDelay = Math.random() * 4 + 's';
+                star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
+                container.appendChild(star);
+            }
+        }
+        createStars();
+
+        // ========== Category Data ==========
+        let currentCategory = '';
+
+        const categoryConfig = {
+            frase: {
+                emoji: '💬',
+                title: 'Frase Pessoal',
+                subtitle: 'Digite sua frase favorita ou lema de vida',
+                input: `<div class="input-group">
+                        <label>Sua frase ou lema de vida:</label>
+                        <textarea id="user-input" placeholder="Ex: A vida é uma aventura ousada ou nada..." oninput="checkInput()"></textarea>
+                    </div>`
+            },
+            foto: {
+                emoji: '📸',
+                title: 'Foto',
+                subtitle: 'Envie uma foto que te representa',
+                input: `<div class="input-group">
+                        <div class="file-upload-area" id="upload-area">
+                            <input type="file" accept="image/*" id="file-input" onchange="handleFile(event)">
+                            <div class="upload-icon">📤</div>
+                            <p class="upload-text"><strong>Clique aqui</strong> ou arraste uma foto</p>
+                            <img class="preview-img" id="preview-img">
+                        </div>
+                    </div>`
+            },
+            personagem: {
+                emoji: '🦸',
+                title: 'Personagem Favorito',
+                subtitle: 'Qual personagem você mais admira?',
+                input: `<div class="input-group">
+                        <label>Nome do personagem:</label>
+                        <input type="text" id="user-input" placeholder="Ex: Goku, Naruto, Batman..." oninput="checkInput()">
+                    </div>
+                    <div class="input-group">
+                        <label>De qual universo? (opcional)</label>
+                        <input type="text" id="user-input-extra" placeholder="Ex: Dragon Ball, Marvel, Anime...">
+                    </div>`
+            },
+            musica: {
+                emoji: '🎵',
+                title: 'Música Favorita',
+                subtitle: 'Qual música toca na trilha da sua vida?',
+                input: `<div class="input-group">
+                        <label>Nome da música:</label>
+                        <input type="text" id="user-input" placeholder="Ex: Bohemian Rhapsody" oninput="checkInput()">
+                    </div>
+                    <div class="input-group">
+                        <label>Artista (opcional):</label>
+                        <input type="text" id="user-input-extra" placeholder="Ex: Queen">
+                    </div>`
+            },
+            signo: {
+                emoji: '♈',
+                title: 'Signo',
+                subtitle: 'Selecione seu signo do zodíaco',
+                input: `<div class="input-group">
+                        <label>Seu signo:</label>
+                        <select id="user-input" onchange="checkInput()">
+                            <option value="">Selecione...</option>
+                            <option value="Áries">♈ Áries</option>
+                            <option value="Touro">♉ Touro</option>
+                            <option value="Gêmeos">♊ Gêmeos</option>
+                            <option value="Câncer">♋ Câncer</option>
+                            <option value="Leão">♌ Leão</option>
+                            <option value="Virgem">♍ Virgem</option>
+                            <option value="Libra">♎ Libra</option>
+                            <option value="Escorpião">♏ Escorpião</option>
+                            <option value="Sagitário">♐ Sagitário</option>
+                            <option value="Capricórnio">♑ Capricórnio</option>
+                            <option value="Aquário">♒ Aquário</option>
+                            <option value="Peixes">♓ Peixes</option>
+                        </select>
+                    </div>`
+            },
+            emoji: {
+                emoji: '😎',
+                title: 'Emoji Favorito',
+                subtitle: 'Qual emoji mais te representa?',
+                input: `<div class="input-group">
+                        <label>Seu emoji favorito:</label>
+                        <input type="text" id="user-input" placeholder="Ex: 🔥, 😎, 💀, 🗿..." oninput="checkInput()" maxlength="4">
+                    </div>`
+            }
+        };
+
+        // ========== Navigation ==========
+        function showScreen(id) {
+            document.querySelectorAll('.screen, .loading-screen').forEach(s => {
+                s.classList.remove('active');
+            });
+            const el = document.getElementById('screen-' + id);
+            if (el) {
+                el.classList.add('active');
+                // Re-trigger animation
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = '';
+            }
+        }
+
+        function selectCategory(cat) {
+            currentCategory = cat;
+            const config = categoryConfig[cat];
+
+            document.getElementById('input-emoji').textContent = config.emoji;
+            document.getElementById('input-title').textContent = config.title;
+            document.getElementById('input-subtitle').textContent = config.subtitle;
+            document.getElementById('input-area').innerHTML = config.input;
+            document.getElementById('submit-btn').disabled = true;
+
+            showScreen('input');
+        }
+
+        function goBack() {
+            showScreen('categories');
+            currentCategory = '';
+        }
+
+        function tryAgain() {
+            showScreen('categories');
+            currentCategory = '';
+        }
+
+        function checkInput() {
+            const input = document.getElementById('user-input');
+            if (input) {
+                document.getElementById('submit-btn').disabled = !input.value.trim();
+            }
+        }
+
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('preview-img');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('upload-area').classList.add('has-file');
+                    document.getElementById('submit-btn').disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ========== Aura Calculation ==========
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        const auraTiers = [
+            { min: 0, max: 15, tier: 'Aura de Pedra 🪨', desc: 'Sua aura está em modo hibernação... Talvez um café ajude!', color: '#636e72', color2: '#b2bec3', traits: ['Introvertido', 'Misterioso', 'Reservado'] },
+            { min: 16, max: 30, tier: 'Aura Nebulosa 🌫️', desc: 'Sua aura é como uma névoa... bonita, mas difícil de entender.', color: '#74b9ff', color2: '#a29bfe', traits: ['Pensativo', 'Calmo', 'Sonhador'] },
+            { min: 31, max: 45, tier: 'Aura Crescente 🌙', desc: 'Sua aura está crescendo como a lua! Tem potencial cósmico guardado.', color: '#81ecec', color2: '#00cec9', traits: ['Determinado', 'Curioso', 'Resiliente'] },
+            { min: 46, max: 60, tier: 'Aura Brilhante ⭐', desc: 'Você brilha naturalmente! As pessoas sentem sua presença ao entrar no recinto.', color: '#fdcb6e', color2: '#ffeaa7', traits: ['Carismático', 'Confiante', 'Magnético'] },
+            { min: 61, max: 75, tier: 'Aura de Fogo 🔥', desc: 'Sua aura é puro fogo! Você é uma força da natureza que inspira todos ao redor.', color: '#e17055', color2: '#fab1a0', traits: ['Intenso', 'Apaixonado', 'Líder'] },
+            { min: 76, max: 89, tier: 'Aura Transcendental 🌌', desc: 'Poucos alcançam esse nível! Sua energia transcende dimensões.', color: '#a29bfe', color2: '#6c5ce7', traits: ['Visionário', 'Sábio', 'Poderoso'] },
+            { min: 90, max: 100, tier: 'Aura Divina 👑', desc: 'LENDÁRIO! Sua aura é tão poderosa que distorce a realidade ao seu redor!', color: '#fdcb6e', color2: '#e84393', traits: ['Lendário', 'Divino', 'Inigualável', 'Supremo'] },
+        ];
+
+        function getAuraTier(score) {
+            return auraTiers.find(t => score >= t.min && score <= t.max);
+        }
+
+        function measureAura() {
+            let inputValue = '';
+
+            if (currentCategory === 'foto') {
+                const file = document.getElementById('file-input');
+                inputValue = file.files[0] ? file.files[0].name + file.files[0].size : 'photo';
+            } else {
+                const input = document.getElementById('user-input');
+                inputValue = input ? input.value : '';
+            }
+
+            // Add some randomness so same input can give slightly different results
+            const hash = hashString(inputValue + Date.now().toString());
+            const score = (hash % 101);
+
+            // Show loading
+            showScreen('loading');
+
+            // Show result after delay
+            setTimeout(() => {
+                displayResult(score);
+            }, 2500 + Math.random() * 1500);
+        }
+
+        function displayResult(score) {
+            const tier = getAuraTier(score);
+
+            // Set colors
+            const card = document.getElementById('result-card');
+            card.style.setProperty('--result-color', tier.color);
+            card.style.setProperty('--result-color2', tier.color2);
+
+            // Set aura circle background
+            const circle = document.getElementById('aura-circle');
+            circle.style.background = `radial-gradient(circle at 40% 40%, ${tier.color}33, ${tier.color2}22, transparent)`;
+
+            // Animate score number
+            document.getElementById('aura-value').textContent = '0';
+            animateNumber(document.getElementById('aura-value'), score);
+
+            // Set tier info
+            document.getElementById('aura-tier').textContent = tier.tier;
+            document.getElementById('aura-tier').style.color = tier.color;
+            document.getElementById('aura-desc').textContent = tier.desc;
+
+            // Set bar
+            const bar = document.getElementById('aura-bar');
+            bar.style.width = '0%';
+            bar.style.background = `linear-gradient(90deg, ${tier.color}, ${tier.color2})`;
+            bar.style.boxShadow = `0 0 20px ${tier.color}`;
+
+            // Set traits
+            const traitsContainer = document.getElementById('aura-traits');
+            traitsContainer.innerHTML = tier.traits.map(t =>
+                `<span class="aura-trait">${t}</span>`
+            ).join('');
+
+            // Create particles
+            createResultParticles(tier.color);
+
+            // Show screen
+            showScreen('result');
+
+            // Trigger bar animation after a tiny delay
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    bar.style.width = score + '%';
+                });
+            });
+        }
+
+        function animateNumber(el, target) {
+            let current = 0;
+            const duration = 2000;
+            const step = 16;
+            const increment = target / (duration / step);
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = Math.round(current);
+            }, step);
+        }
+
+        function createResultParticles(color) {
+            const card = document.getElementById('result-card');
+            // Remove old particles
+            card.querySelectorAll('.particle').forEach(p => p.remove());
+
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.background = color;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.width = particle.style.height = (2 + Math.random() * 4) + 'px';
+                card.appendChild(particle);
+            }
+        }
+    </script>
+</body>
+
+</html>
