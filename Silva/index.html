@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panificadora Silva — Desde 1993 | Pães, Roscas e Encomendas</title>
+    <meta name="description"
+        content="Panificadora Silva — desde 1993 trazendo pães artesanais, roscas, bolos e salgados com o sabor da tradição. Faça sua encomenda!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="Silva.png">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <img src="Silva.png" alt="Panificadora Silva" class="logo-img">
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#inicio" class="nav-link">Início</a>
+                <a href="#sobre" class="nav-link">Sobre</a>
+                <a href="#produtos" class="nav-link">Produtos</a>
+                <a href="#como-funciona" class="nav-link">Encomendas</a>
+                <a href="#depoimentos" class="nav-link">Depoimentos</a>
+                <a href="#contato" class="nav-link">Contato</a>
+            </nav>
+            <div class="header-actions">
+                <button class="cart-btn" id="cartBtn" aria-label="Abrir carrinho">
+                    <svg class="cart-icon-svg" xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <a href="admin.html" class="admin-link-btn" title="Painel Admin">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="hero-particles">
+            <div class="particle particle-1"></div>
+            <div class="particle particle-2"></div>
+            <div class="particle particle-3"></div>
+            <div class="particle particle-4"></div>
+            <div class="particle particle-5"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-logo-wrapper">
+                <img src="Silva.png" alt="Panificadora Silva" class="hero-logo">
+            </div>
+            <span class="hero-badge">
+                <span class="badge-dot"></span>
+                Tradição desde 1993
+            </span>
+            <h1 class="hero-title">
+                A arte de fazer <span class="highlight">pão de verdade</span>
+            </h1>
+            <p class="hero-description">
+                Há mais de 30 anos levando à sua mesa o sabor autêntico de pães artesanais, roscas, bolos e muito mais.
+                Cada receita carrega a tradição e o carinho da família Silva.
+            </p>
+            <div class="hero-buttons">
+                <a href="#produtos" class="btn btn-primary">
+                    <span>Fazer Encomenda</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+                <a href="#sobre" class="btn btn-ghost">
+                    Conheça Nossa História
+                </a>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Role para baixo</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="sobre">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <span class="section-badge">Nossa História</span>
+                    <h2 class="section-title">Mais de <span class="highlight">30 anos</span> de tradição</h2>
+                    <p class="about-description">
+                        Fundada em 1993 pela família Silva, nossa panificadora nasceu do sonho de oferecer pães
+                        artesanais com o verdadeiro sabor caseiro. Cada receita é preparada com ingredientes
+                        selecionados e o carinho que só a tradição familiar pode trazer.
+                    </p>
+                    <p class="about-description">
+                        Hoje, somos referência em qualidade, atendendo centenas de famílias que confiam no nosso
+                        compromisso com o sabor e a excelência.
+                    </p>
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <div class="feature-icon">🌾</div>
+                            <div>
+                                <h4>Ingredientes Selecionados</h4>
+                                <p>Só o melhor para sua mesa</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="feature-icon">👨‍🍳</div>
+                            <div>
+                                <h4>Receitas Tradicionais</h4>
+                                <p>O sabor que atravessa gerações</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="feature-icon">❤️</div>
+                            <div>
+                                <h4>Feito com Amor</h4>
+                                <p>Cada pão tem um toque especial</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual reveal">
+                    <div class="about-card">
+                        <div class="about-card-inner">
+                            <img src="Silva.png" alt="Panificadora Silva" class="about-logo-img">
+                        </div>
+                        <div class="about-stat-badges">
+                            <div class="stat-badge">
+                                <span class="stat-num">30+</span>
+                                <span class="stat-txt">Anos</span>
+                            </div>
+                            <div class="stat-badge">
+                                <span class="stat-num">1000+</span>
+                                <span class="stat-txt">Clientes</span>
+                            </div>
+                            <div class="stat-badge">
+                                <span class="stat-num">20+</span>
+                                <span class="stat-txt">Produtos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section (dynamic) -->
+    <section class="products" id="produtos">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Cardápio</span>
+                <h2 class="section-title">Nossos <span class="highlight">Produtos</span></h2>
+                <p class="section-description">Escolha seus favoritos e monte sua encomenda</p>
+            </div>
+            <div class="products-filter reveal">
+                <button class="filter-btn active" data-filter="todos">Todos</button>
+                <button class="filter-btn" data-filter="paes">Pães</button>
+                <button class="filter-btn" data-filter="doces">Doces</button>
+                <button class="filter-btn" data-filter="salgados">Salgados</button>
+            </div>
+            <!-- Products rendered dynamically by script.js -->
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Simples e Prático</span>
+                <h2 class="section-title">Como fazer sua <span class="highlight">encomenda</span></h2>
+                <p class="section-description">Em apenas 3 passos você garante os melhores pães</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-number">1</div>
+                    <div class="step-icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                    </div>
+                    <h3 class="step-title">Escolha seus produtos</h3>
+                    <p class="step-desc">Navegue pelo nosso cardápio e adicione ao carrinho tudo que deseja encomendar.
+                    </p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-number">2</div>
+                    <div class="step-icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="step-title">Envie pelo WhatsApp</h3>
+                    <p class="step-desc">Finalize sua encomenda com um clique. A lista será enviada automaticamente.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-number">3</div>
+                    <div class="step-icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <h3 class="step-title">Retire ou Receba</h3>
+                    <p class="step-desc">Busque na panificadora ou receba no conforto da sua casa. Simples assim!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials (dynamic) -->
+    <section class="testimonials" id="depoimentos">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Depoimentos</span>
+                <h2 class="section-title">O que nossos <span class="highlight">clientes</span> dizem</h2>
+            </div>
+            <!-- Comments rendered dynamically by script.js -->
+            <div class="testimonials-grid" id="testimonialsGrid"></div>
+
+            <!-- Client comment form -->
+            <div class="comment-form-wrapper reveal" id="commentFormWrapper">
+                <h3 class="comment-form-title">Deixe seu depoimento</h3>
+                <p class="comment-form-subtitle">Conte para nós a sua experiência com a Panificadora Silva</p>
+                <form class="comment-form" id="commentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="commentName">Seu nome</label>
+                            <input type="text" id="commentName" placeholder="Ex: Maria Silva" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="commentStars">Avaliação</label>
+                            <div class="star-rating" id="starRating">
+                                <button type="button" class="star-btn" data-star="1">★</button>
+                                <button type="button" class="star-btn" data-star="2">★</button>
+                                <button type="button" class="star-btn" data-star="3">★</button>
+                                <button type="button" class="star-btn" data-star="4">★</button>
+                                <button type="button" class="star-btn active" data-star="5">★</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="commentText">Seu depoimento</label>
+                        <textarea id="commentText" rows="3"
+                            placeholder="Escreva aqui o que achou dos nossos produtos..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit-comment">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                        Enviar Depoimento
+                    </button>
+                </form>
+                <div class="comment-success" id="commentSuccess" style="display:none;">
+                    <span class="success-icon">✅</span>
+                    <p>Obrigado pelo seu depoimento! Ele já está visível para todos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contato">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Fale Conosco</span>
+                <h2 class="section-title">Entre em <span class="highlight">contato</span></h2>
+                <p class="section-description">Estamos sempre prontos para atendê-lo</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card reveal">
+                    <div class="contact-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                    </div>
+                    <h3>Endereço</h3>
+                    <p>Rua da Panificação, 000<br>Bairro Centro</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                    </div>
+                    <h3>Telefone</h3>
+                    <p>(00) 0000-0000</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                    </div>
+                    <h3>Horário</h3>
+                    <p>Seg a Sáb: 6h às 19h<br>Dom: 6h às 12h</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon-wrapper">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p><a href="https://wa.me/0000000000000" target="_blank" class="whatsapp-link">Clique para
+                            conversar</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <img src="Silva.png" alt="Panificadora Silva" class="footer-logo">
+                <p class="footer-tagline">Tradição e sabor desde 1993.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#inicio">Início</a>
+                <a href="#sobre">Sobre</a>
+                <a href="#produtos">Produtos</a>
+                <a href="#como-funciona">Encomendas</a>
+                <a href="#depoimentos">Depoimentos</a>
+                <a href="#contato">Contato</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Panificadora Silva — Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Sua Encomenda</h2>
+            <button class="cart-close-btn" id="cartCloseBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+                <svg class="cart-empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+                <p>Seu carrinho está vazio</p>
+                <small>Adicione produtos do nosso cardápio</small>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Total estimado:</span>
+                <span class="cart-total-value" id="cartTotal">R$ 0,00</span>
+            </div>
+            <button class="btn btn-primary btn-whatsapp-order" id="orderWhatsApp">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Finalizar pelo WhatsApp
+            </button>
+            <button class="btn btn-outline btn-clear-cart" id="clearCart">
+                Limpar Carrinho
+            </button>
+        </div>
+    </aside>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/0000000000000" target="_blank" class="whatsapp-float" aria-label="Conversar no WhatsApp">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+    </a>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

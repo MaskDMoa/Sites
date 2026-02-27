@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pão da Andreia — Encomendas de Pão, Rosca e Mais</title>
+    <meta name="description"
+        content="Encomende pães artesanais, roscas, bolos e muito mais com a Pão da Andreia. Feito com amor e carinho, direto para sua mesa.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <span class="logo-icon">🍞</span>
+                <span class="logo-text">Pão da Andreia</span>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="#inicio" class="nav-link">Início</a>
+                <a href="#produtos" class="nav-link">Produtos</a>
+                <a href="#como-funciona" class="nav-link">Como Funciona</a>
+                <a href="#depoimentos" class="nav-link">Depoimentos</a>
+                <a href="#contato" class="nav-link">Contato</a>
+            </nav>
+            <div class="header-actions">
+                <button class="cart-btn" id="cartBtn" aria-label="Abrir carrinho">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <a href="admin.html" class="admin-link-btn" title="Painel Admin">
+                    <span>⚙️</span>
+                </a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">🌾 Feito com amor e carinho</span>
+                <h1 class="hero-title">
+                    O melhor <span class="highlight">pão fresquinho</span> direto para sua mesa
+                </h1>
+                <p class="hero-description">
+                    Encomende pães artesanais, roscas, bolos e muito mais. Tudo feito com ingredientes selecionados e
+                    aquele sabor caseiro que você ama.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#produtos" class="btn btn-primary">
+                        Ver Produtos
+                        <span class="btn-arrow">→</span>
+                    </a>
+                    <a href="https://wa.me/5500000000000" target="_blank" class="btn btn-secondary">
+                        <span class="whatsapp-icon">💬</span>
+                        Fale Conosco
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Clientes felizes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Tipos de pão</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">5★</span>
+                        <span class="stat-label">Avaliação</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="hero-emoji">🍞</div>
+                    <div class="floating-badge badge-1">🥐</div>
+                    <div class="floating-badge badge-2">🥖</div>
+                    <div class="floating-badge badge-3">🧁</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section (Dynamic) -->
+    <section class="products" id="produtos">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Nossos Produtos</span>
+                <h2 class="section-title">Delícias feitas com <span class="highlight">carinho</span></h2>
+                <p class="section-description">Escolha seus favoritos e faça sua encomenda</p>
+            </div>
+
+            <div class="products-filter reveal">
+                <button class="filter-btn active" data-filter="todos">Todos</button>
+                <button class="filter-btn" data-filter="paes">Pães</button>
+                <button class="filter-btn" data-filter="doces">Doces</button>
+                <button class="filter-btn" data-filter="salgados">Salgados</button>
+            </div>
+
+            <!-- Products rendered dynamically by script.js from Firestore -->
+            <div class="products-grid" id="productsGrid">
+                <div class="loading-state" id="productsLoading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando produtos...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Simples e Rápido</span>
+                <h2 class="section-title">Como fazer sua <span class="highlight">encomenda</span></h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">🛒</div>
+                    <h3 class="step-title">Escolha</h3>
+                    <p class="step-desc">Navegue pelo nosso cardápio e adicione os produtos que deseja ao carrinho.</p>
+                </div>
+                <div class="step-connector reveal">
+                    <div class="connector-line"></div>
+                    <span class="connector-arrow">→</span>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">💬</div>
+                    <h3 class="step-title">Encomende</h3>
+                    <p class="step-desc">Finalize pelo WhatsApp. Enviaremos sua lista completa automaticamente.</p>
+                </div>
+                <div class="step-connector reveal">
+                    <div class="connector-line"></div>
+                    <span class="connector-arrow">→</span>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">🤩</div>
+                    <h3 class="step-title">Receba</h3>
+                    <p class="step-desc">Retire seus produtos fresquinhos ou receba no conforto da sua casa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials (Dynamic) -->
+    <section class="testimonials" id="depoimentos">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Depoimentos</span>
+                <h2 class="section-title">O que nossos <span class="highlight">clientes</span> dizem</h2>
+            </div>
+            <!-- Comments rendered dynamically by script.js from Firestore -->
+            <div class="testimonials-grid" id="testimonialsGrid">
+                <div class="loading-state" id="testimonialsLoading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando depoimentos...</p>
+                </div>
+            </div>
+
+            <!-- Client comment form -->
+            <div class="comment-form-wrapper reveal" id="commentFormWrapper">
+                <h3 class="comment-form-title">Deixe seu depoimento</h3>
+                <p class="comment-form-subtitle">Conte para nós a sua experiência com o Pão da Andreia</p>
+                <form class="comment-form" id="commentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="commentName">Seu nome</label>
+                            <input type="text" id="commentName" placeholder="Ex: Maria Silva" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="commentStars">Avaliação</label>
+                            <div class="star-rating" id="starRating">
+                                <button type="button" class="star-btn" data-star="1">★</button>
+                                <button type="button" class="star-btn" data-star="2">★</button>
+                                <button type="button" class="star-btn" data-star="3">★</button>
+                                <button type="button" class="star-btn" data-star="4">★</button>
+                                <button type="button" class="star-btn active" data-star="5">★</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="commentText">Seu depoimento</label>
+                        <textarea id="commentText" rows="3"
+                            placeholder="Escreva aqui o que achou dos nossos produtos..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-submit-comment" id="submitCommentBtn">
+                        ✉️ Enviar Depoimento
+                    </button>
+                </form>
+                <div class="comment-success" id="commentSuccess" style="display:none;">
+                    <span class="success-icon">✅</span>
+                    <p>Obrigado pelo seu depoimento! Ele já está visível para todos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contato">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-badge">Fale Conosco</span>
+                <h2 class="section-title">Entre em <span class="highlight">contato</span></h2>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card reveal">
+                    <div class="contact-icon">📍</div>
+                    <h3>Endereço</h3>
+                    <p>Rua do Pão Quentinho, 123<br>Bairro Centro</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon">📞</div>
+                    <h3>Telefone</h3>
+                    <p>(00) 00000-0000</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon">🕐</div>
+                    <h3>Horário</h3>
+                    <p>Seg a Sáb: 6h às 19h<br>Dom: 6h às 12h</p>
+                </div>
+                <div class="contact-card reveal">
+                    <div class="contact-icon">💬</div>
+                    <h3>WhatsApp</h3>
+                    <p><a href="https://wa.me/5500000000000" target="_blank" class="whatsapp-link">Clique para
+                            conversar</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <span class="logo-icon">🍞</span>
+                <span class="logo-text">Pão da Andreia</span>
+                <p class="footer-tagline">Feito com amor e carinho, desde sempre. ❤️</p>
+            </div>
+            <div class="footer-links">
+                <a href="#inicio">Início</a>
+                <a href="#produtos">Produtos</a>
+                <a href="#como-funciona">Como Funciona</a>
+                <a href="#depoimentos">Depoimentos</a>
+                <a href="#contato">Contato</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Pão da Andreia — Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Sua Encomenda</h2>
+            <button class="cart-close-btn" id="cartCloseBtn">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+                <span class="cart-empty-icon">🛒</span>
+                <p>Seu carrinho está vazio</p>
+                <small>Adicione produtos para fazer sua encomenda</small>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display:none;">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="cart-total-value" id="cartTotal">R$ 0,00</span>
+            </div>
+            <button class="btn btn-primary btn-whatsapp-order" id="orderWhatsApp">
+                <span>💬</span> Finalizar pelo WhatsApp
+            </button>
+            <button class="btn btn-outline btn-clear-cart" id="clearCart">
+                Limpar Carrinho
+            </button>
+        </div>
+    </aside>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/5500000000000" target="_blank" class="whatsapp-float" aria-label="Conversar no WhatsApp">
+        💬
+    </a>
+
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
