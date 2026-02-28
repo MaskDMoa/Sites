@@ -10,6 +10,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap"
         rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -798,10 +801,463 @@
                 flex-direction: column;
             }
         }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(10, 10, 26, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .navbar.hidden {
+            display: none;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-purple);
+            object-fit: cover;
+        }
+
+        .nav-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.achievements-btn {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .nav-btn.achievements-btn:hover {
+            background: rgba(155, 89, 240, 0.15);
+        }
+
+        body.logged-in .container {
+            padding-top: 80px;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            max-width: 450px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 45px 35px;
+            backdrop-filter: blur(20px);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .login-card>p {
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 25px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .login-form input:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 20px rgba(155, 89, 240, 0.2);
+        }
+
+        .login-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(155, 89, 240, 0.4);
+        }
+
+        .login-toggle {
+            margin-top: 15px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .login-toggle a {
+            color: var(--accent-purple);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .login-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        .login-error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Achievements Panel */
+        .achievements-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px;
+            overflow-y: auto;
+        }
+
+        .achievements-overlay.active {
+            display: flex;
+        }
+
+        .achievements-panel {
+            max-width: 700px;
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .achievements-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-achievements {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-achievements:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .achievements-progress {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .achievements-progress strong {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .achievement-badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-badge.unlocked {
+            border-color: var(--badge-color, var(--accent-purple));
+            box-shadow: 0 0 15px color-mix(in srgb, var(--badge-color, var(--accent-purple)) 25%, transparent);
+        }
+
+        .achievement-badge.unlocked:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px color-mix(in srgb, var(--badge-color, var(--accent-purple)) 35%, transparent);
+        }
+
+        .achievement-badge.locked {
+            opacity: 0.45;
+            filter: grayscale(0.6);
+        }
+
+        .badge-emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .badge-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .badge-hint {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1.3;
+        }
+
+        /* Achievement Toast */
+        .achievement-toast {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 300;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 10px 40px rgba(155, 89, 240, 0.3);
+            animation: toastIn 0.5s ease-out, toastOut 0.5s ease-in 3.5s forwards;
+            max-width: 320px;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        .toast-emoji {
+            font-size: 2rem;
+        }
+
+        .toast-text h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-purple);
+            margin-bottom: 3px;
+        }
+
+        .toast-text p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+
+            .nav-name {
+                display: none;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .achievements-panel {
+                padding: 20px 15px;
+            }
+
+            .login-card {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Navbar (hidden until logged in) -->
+    <nav class="navbar hidden" id="navbar">
+        <div class="nav-user">
+            <img class="nav-avatar" id="nav-avatar"
+                src="https://ui-avatars.com/api/?name=U&background=6c5ce7&color=fff&size=64" alt="avatar">
+            <span class="nav-name" id="nav-name">Usuário</span>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn achievements-btn" onclick="openAchievements()">🏆 Conquistas</button>
+            <button class="nav-btn" onclick="doLogout()">Sair</button>
+        </div>
+    </nav>
+
+    <!-- Achievements Overlay -->
+    <div class="achievements-overlay" id="achievements-overlay" onclick="if(event.target===this)closeAchievements()">
+        <div class="achievements-panel">
+            <div class="achievements-header">
+                <h2>🏆 Conquistas</h2>
+                <button class="close-achievements" onclick="closeAchievements()">✕</button>
+            </div>
+            <p class="achievements-progress" id="achievements-progress">Desbloqueadas: <strong>0</strong> / 0</p>
+            <div class="achievements-grid" id="achievements-grid"></div>
+        </div>
+    </div>
 
     <div class="bg-stars" id="stars"></div>
     <div class="nebula nebula-1"></div>
@@ -815,8 +1271,37 @@
             <p>Descubra o nível da sua energia cósmica</p>
         </header>
 
+        <!-- Screen 0: Login -->
+        <div class="screen active" id="screen-login">
+            <div class="login-screen">
+                <div class="login-card">
+                    <h2>✨ Entre para começar</h2>
+                    <p>Faça login para medir sua aura e desbloquear conquistas</p>
+
+                    <button class="google-btn" onclick="loginWithGoogle()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                        Entrar com Google
+                    </button>
+
+                    <div class="login-divider">ou</div>
+
+                    <form class="login-form" id="login-form" onsubmit="return handleEmailLogin(event)">
+                        <input type="email" id="login-email" placeholder="Email" required>
+                        <input type="password" id="login-password" placeholder="Senha" required minlength="6">
+                        <button type="submit" class="login-submit" id="login-submit-btn">Entrar</button>
+                    </form>
+
+                    <p class="login-toggle" id="login-toggle">
+                        Não tem conta? <a onclick="toggleLoginMode()">Criar conta</a>
+                    </p>
+
+                    <p class="login-error" id="login-error"></p>
+                </div>
+            </div>
+        </div>
+
         <!-- Screen 1: Category Selection -->
-        <div class="screen active" id="screen-categories">
+        <div class="screen" id="screen-categories">
             <p class="categories-title">Escolha uma categoria para revelar sua aura</p>
             <div class="categories-grid">
                 <div class="category-card" data-category="frase" style="--card-color1: #9b59f0; --card-color2: #6c5ce7;"
@@ -915,6 +1400,250 @@
     </div>
 
     <script>
+        // ========== Firebase Init ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyQZ3vX7PJSx-hqDpHBtH_I2rD1qGFJls",
+            authDomain: "pedidos-773d4.firebaseapp.com",
+            projectId: "pedidos-773d4",
+            storageBucket: "pedidos-773d4.firebasestorage.app",
+            messagingSenderId: "603286132362",
+            appId: "1:603286132362:web:5e099212527a289f62ff73",
+            measurementId: "G-Z8KGN25KWN"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let currentUser = null;
+        let userAchievements = {};
+        let isRegisterMode = false;
+
+        // ========== Auth State ==========
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                document.body.classList.add('logged-in');
+                document.getElementById('navbar').classList.remove('hidden');
+                document.getElementById('nav-name').textContent = user.displayName || user.email.split('@')[0];
+                document.getElementById('nav-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6c5ce7&color=fff&size=64`;
+
+                // Load achievements from Firestore
+                await loadAchievements();
+
+                // Show categories
+                document.getElementById('screen-login').classList.remove('active');
+                document.getElementById('screen-categories').classList.add('active');
+            } else {
+                currentUser = null;
+                userAchievements = {};
+                document.body.classList.remove('logged-in');
+                document.getElementById('navbar').classList.add('hidden');
+
+                // Show login
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-login').classList.add('active');
+            }
+        });
+
+        // ========== Login Functions ==========
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch(showLoginError);
+        }
+
+        function handleEmailLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            hideLoginError();
+
+            if (isRegisterMode) {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .then(cred => {
+                        return cred.user.updateProfile({ displayName: email.split('@')[0] });
+                    })
+                    .catch(showLoginError);
+            } else {
+                auth.signInWithEmailAndPassword(email, password)
+                    .catch(showLoginError);
+            }
+            return false;
+        }
+
+        function toggleLoginMode() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('login-submit-btn').textContent = isRegisterMode ? 'Criar Conta' : 'Entrar';
+            document.getElementById('login-toggle').innerHTML = isRegisterMode
+                ? 'Já tem conta? <a onclick="toggleLoginMode()">Fazer login</a>'
+                : 'Não tem conta? <a onclick="toggleLoginMode()">Criar conta</a>';
+            hideLoginError();
+        }
+
+        function showLoginError(err) {
+            const el = document.getElementById('login-error');
+            const messages = {
+                'auth/email-already-in-use': 'Este email já está cadastrado.',
+                'auth/invalid-credential': 'Email ou senha incorretos.',
+                'auth/user-not-found': 'Usuário não encontrado.',
+                'auth/wrong-password': 'Senha incorreta.',
+                'auth/weak-password': 'A senha deve ter pelo menos 6 caracteres.',
+                'auth/invalid-email': 'Email inválido.',
+                'auth/too-many-requests': 'Muitas tentativas. Tente novamente mais tarde.',
+            };
+            el.textContent = messages[err.code] || 'Erro: ' + err.message;
+            el.style.display = 'block';
+        }
+
+        function hideLoginError() {
+            document.getElementById('login-error').style.display = 'none';
+        }
+
+        function doLogout() {
+            auth.signOut();
+        }
+
+        // ========== Achievements System ==========
+        const achievementHints = {
+            'Aura de Pedra 🪨': 'Às vezes, menos é mais...',
+            'Aura Nebulosa 🌫️': 'Explore diferentes categorias',
+            'Aura Crescente 🌙': 'Continue tentando novas combinações',
+            'Aura Brilhante ⭐': 'A sorte favorece os persistentes',
+            'Aura de Fogo 🔥': 'Paixão gera energia poderosa',
+            'Aura Transcendental 🌌': 'Poucos alcançam este nível...',
+            'Aura Divina 👑': 'O topo é para poucos escolhidos',
+            'Aura do Pão de Queijo 🧀✨': 'Algo delicioso de Minas Gerais...',
+            'Aura Brainrot 🧠🪱': 'Cuidado com os memes de 2024...',
+            'Aura das Trevas 💀': 'Não fale mal do que é sagrado!',
+            'Aura de DIO 🧛⏰': 'Pare o tempo com uma referência vampiresca',
+            'Aura de Jotaro ⭐🟣': 'Um delinquente com espírito de luta',
+            'Aura de Giorno 🟡🎹': 'Eu tenho um sonho...',
+            'Aura de Speedwagon ❤️🎩': 'A melhor waifu de todos os tempos',
+            'Aura Bizarre ✨💎': 'Uma aventura muito... bizarra',
+            'Aura Saiyajin 🐉⚡': 'KAAAA-MEEE... você sabe o resto',
+            'Aura Ninja 🍥🌀': 'Acredite no caminho ninja!',
+            'Aura do Rei dos Piratas 🏴‍☠️🗺️': 'O tesouro mais lendário dos mares',
+            'Aura do Titã ⚔️🏰': 'Dedique seu coração pela humanidade',
+            'Aura Jujutsu 👁️💀': 'Expanda seus domínios...',
+            'Aura PLUS ULTRA 💚⚡': 'Vá além dos seus limites!',
+            'Aura de Um Soco 👊😐': 'OK. Apenas um soco basta...',
+            'Aura Respiração do Sol 🔥⚔️': 'Respire como um caçador lendário',
+            'Aura do Death Note 📓✍️': 'Escreva o nome... da justiça',
+            'Aura Otaku Supremo 🌸✨': 'Abraça a cultura 2D com orgulho',
+            'Aura Rickroll 🎤🕺': 'Never gonna... você conhece essa',
+            'Aura Heisenberg 🧪💎': 'Diga meu nome! Cristal azul 99.1%',
+            'Aura do Infinito ⚡🫰': 'Perfeitamente balanceado, como deveria ser',
+            'Aura GigaChad 🗿💪': 'Seja baseado. Seja o average enjoyer.',
+            'Aura Gamer 🎮👑': 'GG EZ! É tudo questão de skill',
+            'Aura Internet Clássica 💾🌐': 'Memórias da era de ouro da internet',
+            'Aura do Sofrimento ☕🔥': 'Tá tudo bem... (não tá)',
+            'Aura Society 🃏🌃': 'Vivemos numa sociedade...',
+            "Aura Morbin' Time 🦇🧛": 'É hora de morbinar!',
+            'Aura CJ 🚗💨': 'Ah droga, aqui vamos nós de novo...',
+            'Aura da Terra Média 🧙💍': 'Nem todos que vagam estão perdidos...',
+            'Aura de Hogwarts 🧙‍♂️⚡': 'Use o feitiço certo!',
+            'Aura do Tolo Acima da Névoa 🎭🌫️': 'Acima da névoa, o tarot guide...',
+            'Aura de Arrakis 🏜️🪱': 'O medo é o assassino da mente',
+            'Aura 1984 👁️📺': 'O Grande Irmão está observando...',
+            'Aura do PADORU ☃️🎄': 'HASHIRE SORI YO...',
+            'Aura Meme Suprema 🗿👑': 'Transcenda através do poder meme',
+            'Aura do Pacto Selado ⚔️🔮': 'Sele um pacto com sua lâmina',
+            "IT'S OVER 9000!!! 💥": 'O número que quebra os scouters!',
+        };
+
+        async function loadAchievements() {
+            if (!currentUser) return;
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                if (doc.exists && doc.data().achievements) {
+                    userAchievements = doc.data().achievements;
+                } else {
+                    userAchievements = {};
+                    await db.collection('users').doc(currentUser.uid).set({
+                        displayName: currentUser.displayName || currentUser.email,
+                        achievements: {}
+                    }, { merge: true });
+                }
+            } catch (e) {
+                console.error('Erro ao carregar conquistas:', e);
+                userAchievements = {};
+            }
+        }
+
+        async function unlockAchievement(tierName) {
+            if (!currentUser || userAchievements[tierName]) return false;
+
+            userAchievements[tierName] = Date.now();
+            try {
+                await db.collection('users').doc(currentUser.uid).set({
+                    achievements: userAchievements
+                }, { merge: true });
+            } catch (e) {
+                console.error('Erro ao salvar conquista:', e);
+            }
+            return true; // New achievement!
+        }
+
+        function showAchievementToast(tier) {
+            // Remove previous toasts
+            document.querySelectorAll('.achievement-toast').forEach(t => t.remove());
+
+            const emoji = tier.tier.match(/[\p{Emoji}\u200d]+$/u)?.[0] || '🏆';
+            const toast = document.createElement('div');
+            toast.className = 'achievement-toast';
+            toast.innerHTML = `
+                <span class="toast-emoji">🏆</span>
+                <div class="toast-text">
+                    <h4>Nova Conquista!</h4>
+                    <p>${tier.tier}</p>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
+        function openAchievements() {
+            renderAchievements();
+            document.getElementById('achievements-overlay').classList.add('active');
+        }
+
+        function closeAchievements() {
+            document.getElementById('achievements-overlay').classList.remove('active');
+        }
+
+        function renderAchievements() {
+            const grid = document.getElementById('achievements-grid');
+            grid.innerHTML = '';
+
+            // Get unique tiers (skip duplicates by name)
+            const uniqueTiers = [];
+            const seen = new Set();
+            // auraTiers is defined later in the file, this runs after page load
+            for (const t of auraTiers) {
+                if (!seen.has(t.tier)) {
+                    seen.add(t.tier);
+                    uniqueTiers.push(t);
+                }
+            }
+
+            const unlockedCount = uniqueTiers.filter(t => userAchievements[t.tier]).length;
+            document.getElementById('achievements-progress').innerHTML =
+                `Desbloqueadas: <strong>${unlockedCount}</strong> / ${uniqueTiers.length}`;
+
+            for (const tier of uniqueTiers) {
+                const isUnlocked = !!userAchievements[tier.tier];
+                const badge = document.createElement('div');
+                badge.className = `achievement-badge ${isUnlocked ? 'unlocked' : 'locked'}`;
+                badge.style.setProperty('--badge-color', tier.color);
+
+                const hint = achievementHints[tier.tier] || 'Continue explorando...';
+                badge.innerHTML = `
+                    <span class="badge-emoji">${isUnlocked ? (tier.tier.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu) || ['🏆']).slice(-2).join('') : '🔒'}</span>
+                    <div class="badge-name">${isUnlocked ? tier.tier.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]+/gu, '').trim() : '???'}</div>
+                    <div class="badge-hint">${isUnlocked ? 'Desbloqueada! ✅' : hint}</div>
+                `;
+                grid.appendChild(badge);
+            }
+        }
+
         // ========== Stars Background ==========
         function createStars() {
             const container = document.getElementById('stars');
@@ -1525,6 +2254,13 @@
 
             // Create particles
             createResultParticles(tier.color);
+
+            // Unlock achievement if new
+            unlockAchievement(tier.tier).then(isNew => {
+                if (isNew) {
+                    setTimeout(() => showAchievementToast(tier), 1500);
+                }
+            });
 
             // Show screen
             showScreen('result');
