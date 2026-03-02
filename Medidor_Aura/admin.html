@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Medidor de Aura ✨</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #07071a;
+            --bg2: #0f0f2a;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.09);
+            --purple: #9b59f0;
+            --pink: #e84393;
+            --cyan: #00cec9;
+            --gold: #fdcb6e;
+            --green: #00b894;
+            --red: #d63031;
+            --text: #f0f0ff;
+            --muted: #7a7aaa;
+            --danger: #ff6b6b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .bg-orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: .12;
+            animation: drift 22s ease-in-out infinite;
+        }
+
+        .orb1 {
+            width: 600px;
+            height: 600px;
+            background: var(--purple);
+            top: -200px;
+            right: -100px;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: var(--pink);
+            bottom: -100px;
+            left: -80px;
+            animation-delay: -8s;
+        }
+
+        .orb3 {
+            width: 300px;
+            height: 300px;
+            background: var(--cyan);
+            top: 50%;
+            left: 40%;
+            animation-delay: -14s;
+        }
+
+        @keyframes drift {
+
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+
+            33% {
+                transform: translate(20px, -15px)
+            }
+
+            66% {
+                transform: translate(-15px, 20px)
+            }
+        }
+
+        .shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topbar-brand .logo {
+            font-size: 28px;
+        }
+
+        .topbar-brand h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .topbar-brand span {
+            font-size: .75rem;
+            background: linear-gradient(90deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 1px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 14px 6px 6px;
+        }
+
+        .user-chip img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .user-chip span {
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-sm:hover {
+            border-color: var(--purple);
+            color: var(--text);
+        }
+
+        /* GATE */
+        #gate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            text-align: center;
+            gap: 16px;
+        }
+
+        #gate .lock {
+            font-size: 64px;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.08)
+            }
+        }
+
+        #gate h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+        }
+
+        #gate p {
+            color: var(--muted);
+            max-width: 380px;
+            line-height: 1.5;
+        }
+
+        .gate-input {
+            width: 100%;
+            max-width: 320px;
+            padding: 13px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+
+        .gate-input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 20px rgba(155, 89, 240, .2);
+        }
+
+        .btn-primary {
+            padding: 13px 32px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(155, 89, 240, .4);
+        }
+
+        .gate-error {
+            color: var(--danger);
+            font-size: .9rem;
+            display: none;
+        }
+
+        .uid-box {
+            background: var(--card);
+            border: 1px solid rgba(0, 206, 201, .3);
+            border-radius: 12px;
+            padding: 14px 20px;
+            max-width: 460px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .uid-box .uid-label {
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--cyan);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .uid-box code {
+            font-size: .88rem;
+            color: var(--text);
+            word-break: break-all;
+            background: rgba(0, 206, 201, .08);
+            padding: 6px 10px;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .uid-box p {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        /* PANEL */
+        #panel {
+            display: none;
+        }
+
+        #panel.visible {
+            display: block;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 5px;
+            margin-bottom: 32px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 9px 22px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 20px;
+        }
+
+        .stat-card .label {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* SECTION */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(var(--purple), var(--pink));
+            border-radius: 4px;
+        }
+
+        .btn-add {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(155, 89, 240, .4);
+        }
+
+        /* FILTER */
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--purple);
+        }
+
+        .search-input::placeholder {
+            color: var(--muted);
+        }
+
+        .filter-select {
+            padding: 10px 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select option {
+            background: #0f0f2a;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: rgba(255, 255, 255, .03);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            transition: background .15s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, .03);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            font-size: .9rem;
+            vertical-align: middle;
+        }
+
+        .tier-name {
+            font-weight: 600;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 600;
+        }
+
+        .type-normal {
+            background: rgba(155, 89, 240, .15);
+            color: var(--purple);
+            border: 1px solid rgba(155, 89, 240, .3);
+        }
+
+        .type-secret {
+            background: rgba(232, 67, 147, .15);
+            color: var(--pink);
+            border: 1px solid rgba(232, 67, 147, .3);
+        }
+
+        .type-special {
+            background: rgba(253, 203, 110, .15);
+            color: var(--gold);
+            border: 1px solid rgba(253, 203, 110, .3);
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, .2);
+        }
+
+        .range-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all .2s;
+        }
+
+        .btn-icon.edit:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 206, 201, .1);
+        }
+
+        .btn-icon.del:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: rgba(214, 48, 49, .1);
+        }
+
+        /* USER TABLE */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .user-sub {
+            font-size: .73rem;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .badge-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(155, 89, 240, .15);
+            border: 1px solid rgba(155, 89, 240, .3);
+            color: var(--purple);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        .ach-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-width: 280px;
+        }
+
+        .ach-chip {
+            font-size: .68rem;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 2px 7px;
+            color: var(--muted);
+        }
+
+        /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .75);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #0f0f2a;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform .3s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: .8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .95rem;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 16px rgba(155, 89, 240, .15);
+        }
+
+        .form-control::placeholder {
+            color: var(--muted);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-preview {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .field-hint {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-cancel {
+            padding: 10px 22px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .btn-save {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(155, 89, 240, .4);
+        }
+
+        /* USER EDIT MODAL */
+        .um-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid var(--purple);
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .um-email {
+            text-align: center;
+            color: var(--muted);
+            font-size: .83rem;
+            margin-bottom: 24px;
+        }
+
+        .ach-toggle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .ach-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+
+        .ach-toggle:hover {
+            border-color: var(--purple);
+        }
+
+        .ach-toggle.has {
+            border-color: rgba(0, 184, 148, .5);
+            background: rgba(0, 184, 148, .07);
+        }
+
+        .ach-toggle input {
+            accent-color: var(--green);
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .ach-toggle-name {
+            font-size: .8rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* CONFIRM */
+        #confirm-overlay {
+            z-index: 1100;
+        }
+
+        .confirm-box {
+            background: #0f0f2a;
+            border: 1px solid rgba(214, 48, 49, .3);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .confirm-box .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .confirm-box h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .confirm-box p {
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-danger {
+            padding: 10px 24px;
+            background: var(--danger);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* TOAST */
+        .toast-stack {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a3a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            min-width: 260px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+            animation: slideIn .3s ease;
+        }
+
+        .toast.success {
+            border-left: 3px solid var(--green);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        .loading-row td {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(155, 89, 240, .2);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            tbody td:nth-child(4) {
+                display: none;
+            }
+
+            .ach-toggle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <div class="shell">
+        <div class="topbar">
+            <div class="topbar-brand">
+                <div class="logo">✨</div>
+                <div>
+                    <h1>Medidor de Aura</h1><span>Painel Admin</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="user-chip" id="user-chip" style="display:none">
+                    <img id="admin-avatar" src="" alt="">
+                    <span id="admin-name"></span>
+                </div>
+                <a href="index.html" class="btn-sm">← Voltar ao Site</a>
+                <button class="btn-sm" id="btn-logout" style="display:none" onclick="doLogout()">Sair</button>
+            </div>
+        </div>
+
+        <!-- GATE -->
+        <div id="gate">
+            <div class="lock">🔐</div>
+            <h2>Área Restrita</h2>
+            <p>Digite a senha de administrador para acessar o painel.</p>
+            <input type="password" class="gate-input" id="gate-pass" placeholder="••••••••"
+                onkeydown="if(event.key==='Enter')checkGate()">
+            <button class="btn-primary" onclick="checkGate()">Entrar no Painel</button>
+            <div class="gate-error" id="gate-error">❌ Senha incorreta</div>
+            <div class="uid-box" id="uid-box" style="display:none">
+                <div class="uid-label">Seu UID (copie para as regras do Firebase)</div>
+                <code id="uid-text"></code>
+                <p>Cole esse UID no array <strong>ADMIN_UIDS</strong> dentro do admin.html e nas regras do Firestore.
+                </p>
+            </div>
+        </div>
+
+        <!-- PANEL -->
+        <div id="panel">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('conquistas')">🏆 Conquistas</button>
+                <button class="tab-btn" onclick="switchTab('usuarios')">👥 Usuários</button>
+            </div>
+
+            <!-- TAB CONQUISTAS -->
+            <div class="tab-content active" id="tab-conquistas">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="label">Total de Conquistas</div>
+                        <div class="value" id="stat-total">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Normais (0–100)</div>
+                        <div class="value" id="stat-normal">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Secretas</div>
+                        <div class="value" id="stat-secret">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Usuários</div>
+                        <div class="value" id="stat-users">—</div>
+                    </div>
+                </div>
+                <div class="section-header">
+                    <div class="section-title">Conquistas Cadastradas</div>
+                    <button class="btn-add" onclick="openModal()">＋ Nova Conquista</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" class="search-input" id="search-input"
+                        placeholder="🔍  Buscar por nome, descrição ou keywords..." oninput="renderTable()">
+                    <select class="filter-select" id="type-filter" onchange="renderTable()">
+                        <option value="">Todos os tipos</option>
+                        <option value="normal">Normal (0–100)</option>
+                        <option value="secret">Secreto (&gt;100 ou &lt;0)</option>
+                    </select>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Conquista</th>
+                                <th>Tipo</th>
+                                <th>Range</th>
+                                <th>Cores</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <tr class="loading-row">
+                                <td colspan="5">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB USUÁRIOS -->
+            <div class="tab-content" id="tab-usuarios">
+                <div class="section-header">
+                    <div class="section-title">Contas Cadastradas</div>
+                    <button class="btn-sm" onclick="loadUsers()" style="border-color:var(--cyan);color:var(--cyan)">↺
+                        Atualizar</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" class="search-input" id="user-search" placeholder="🔍  Buscar por nome..."
+                        oninput="renderUsers()">
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Usuário</th>
+                                <th>Conquistas</th>
+                                <th>Desbloqueadas</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-body">
+                            <tr class="loading-row">
+                                <td colspan="4">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONQUISTA -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModalIfBg(event)">
+        <div class="modal">
+            <div class="modal-title" id="modal-title">✨ Nova Conquista</div>
+            <form onsubmit="saveAchievement(event)">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Nome / Tier</label>
+                        <input type="text" class="form-control" id="f-tier" placeholder="Ex: Aura Divina 👑" required>
+                    </div>
+                    <div class="form-group full">
+                        <label>Descrição</label>
+                        <textarea class="form-control" id="f-desc"
+                            placeholder="Texto exibido ao obter esse resultado..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Score Mínimo</label>
+                        <input type="number" class="form-control" id="f-min" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Score Máximo</label>
+                        <input type="number" class="form-control" id="f-max" placeholder="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor Principal</label>
+                        <div class="color-row">
+                            <div class="color-preview" id="preview-color1"></div>
+                            <input type="color" class="form-control" id="f-color1" value="#9b59f0"
+                                oninput="updateColorPreview()" style="height:42px;padding:4px 8px;cursor:pointer">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cor Secundária</label>
+                        <div class="color-row">
+                            <div class="color-preview" id="preview-color2"></div>
+                            <input type="color" class="form-control" id="f-color2" value="#e84393"
+                                oninput="updateColorPreview()" style="height:42px;padding:4px 8px;cursor:pointer">
+                        </div>
+                    </div>
+                    <div class="form-group full">
+                        <label>Traits (características)</label>
+                        <input type="text" class="form-control" id="f-traits"
+                            placeholder="Ex: Lendário, Divino, Inigualável">
+                        <div class="field-hint">Separe por vírgula.</div>
+                    </div>
+                    <div class="form-group full">
+                        <label>🔑 Palavras-chave para ativar</label>
+                        <textarea class="form-control" id="f-keywords"
+                            placeholder="Ex: pão de queijo, queijo mineiro&#10;Uma por linha ou separadas por vírgula"
+                            style="min-height:80px"></textarea>
+                        <div class="field-hint">O jogador ganha essa conquista ao digitar qualquer uma dessas
+                            palavras/frases.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>🎯 Score fixo ao ativar</label>
+                        <input type="number" class="form-control" id="f-fixed-score"
+                            placeholder="Vazio = usa Score Mínimo">
+                        <div class="field-hint">Score exato que o jogador recebe ao digitar a keyword.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hint (dica para desbloquear)</label>
+                        <input type="text" class="form-control" id="f-hint"
+                            placeholder="Ex: Algo delicioso de Minas...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">💾 Salvar Conquista</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR USUÁRIO -->
+    <div class="modal-overlay" id="user-modal-overlay" onclick="closeUserModalIfBg(event)">
+        <div class="modal">
+            <div class="modal-title" id="um-title">👤 Editar Usuário</div>
+            <img class="um-avatar" id="um-avatar" src="" alt="">
+            <div class="um-email" id="um-email"></div>
+            <div class="form-grid" style="margin-bottom:22px">
+                <div class="form-group full">
+                    <label>Nome no Ranking</label>
+                    <input type="text" class="form-control" id="um-rankname" maxlength="30"
+                        placeholder="Nome exibido publicamente no ranking">
+                </div>
+            </div>
+            <div class="section-title" style="margin-bottom:14px;font-size:.95rem">Conquistas Desbloqueadas</div>
+            <div class="ach-toggle-grid" id="um-ach-grid"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeUserModal()">Cancelar</button>
+                <button type="button" class="btn-save" onclick="saveUser()">💾 Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRMAR EXCLUSÃO -->
+    <div class="modal-overlay" id="confirm-overlay"
+        onclick="if(event.target.id==='confirm-overlay')this.classList.remove('open')">
+        <div class="confirm-box">
+            <div class="icon">🗑️</div>
+            <h3>Excluir Conquista?</h3>
+            <p id="confirm-text"></p>
+            <div class="confirm-btns">
+                <button class="btn-cancel"
+                    onclick="document.getElementById('confirm-overlay').classList.remove('open')">Cancelar</button>
+                <button class="btn-danger" id="btn-confirm-del">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-stack" id="toast-stack"></div>
+
+    <script>
+        // ── Firebase ──
+        const firebaseConfig = {
+            apiKey: "AIzaSyAyQZ3vX7PJSx-hqDpHBtH_I2rD1qGFJls",
+            authDomain: "pedidos-773d4.firebaseapp.com",
+            projectId: "pedidos-773d4",
+            storageBucket: "pedidos-773d4.firebasestorage.app",
+            messagingSenderId: "603286132362",
+            appId: "1:603286132362:web:5e099212527a289f62ff73"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ══════════════════════════════════════
+        //  CONFIGURAÇÃO — ALTERE AQUI
+        // ══════════════════════════════════════
+        const ADMIN_PASSWORD = 'aura@admin2024';
+
+        // Cole aqui o(s) UID(s) que podem acessar o admin
+        // O UID aparece logo abaixo do campo de senha quando você acessa essa página
+        const ADMIN_UIDS = [
+            'rzcgwh0lKKd53upONfKtqHnGho43'
+        ];
+        // ══════════════════════════════════════
+
+        let allAchievements = [];
+        let allUsers = [];
+        let editingId = null;
+        let editingUserId = null;
+        let currentUser = null;
+
+        // ── Auth ──
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('user-chip').style.display = 'flex';
+                document.getElementById('btn-logout').style.display = 'inline-block';
+                document.getElementById('admin-name').textContent = user.displayName || user.email.split('@')[0];
+                document.getElementById('admin-avatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || user.email)}&background=6c5ce7&color=fff&size=64`;
+                document.getElementById('uid-box').style.display = 'block';
+                document.getElementById('uid-text').textContent = user.uid;
+            } else {
+                document.getElementById('user-chip').style.display = 'none';
+                document.getElementById('btn-logout').style.display = 'none';
+                document.getElementById('uid-box').style.display = 'none';
+            }
+        });
+        function doLogout() { auth.signOut(); }
+
+        // ── Gate ──
+        function checkGate() {
+            const pass = document.getElementById('gate-pass').value;
+            if (pass !== ADMIN_PASSWORD) {
+                document.getElementById('gate-error').style.display = 'block'; return;
+            }
+            document.getElementById('gate').style.display = 'none';
+            document.getElementById('panel').classList.add('visible');
+            loadAchievements();
+            loadUsers();
+        }
+
+        // ── Tabs ──
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', ['conquistas', 'usuarios'][i] === tab));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        // ══════════════════════════════════════
+        //  CONQUISTAS
+        // ══════════════════════════════════════
+        async function loadAchievements() {
+            document.getElementById('table-body').innerHTML = '<tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr>';
+            try {
+                const snap = await db.collection('achievements').orderBy('min').get();
+                allAchievements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            } catch (e) {
+                allAchievements = [];
+                toast('ℹ️', 'Coleção "achievements" vazia. Crie a primeira conquista!', 'success');
+            }
+            renderTable();
+            updateStats();
+        }
+
+        function renderTable() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const type = document.getElementById('type-filter').value;
+            const list = allAchievements.filter(a => {
+                const matchQ = !q || [a.tier, a.desc, ...(a.traits || []), ...(a.keywords || [])].join(' ').toLowerCase().includes(q);
+                const isSecret = a.min > 100 || a.max > 100 || a.min < 0;
+                return matchQ && (!type || (type === 'normal' && !isSecret) || (type === 'secret' && isSecret));
+            });
+            const tbody = document.getElementById('table-body');
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="icon">🔍</div><div>Nenhuma conquista encontrada</div></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(a => {
+                const isSecret = a.min > 100 || a.max > 100 || a.min < 0;
+                const isSpecial = a.min >= 777;
+                const badge = isSpecial ? '<span class="type-badge type-special">Especial</span>'
+                    : isSecret ? '<span class="type-badge type-secret">Secreto</span>'
+                        : '<span class="type-badge type-normal">Normal</span>';
+                const kws = (a.keywords || []).slice(0, 3).join(', ') + (a.keywords?.length > 3 ? '...' : '');
+                return `<tr>
+            <td>
+                <div class="tier-name">${escHtml(a.tier)}</div>
+                ${kws ? `<div style="font-size:.72rem;color:var(--muted);margin-top:3px">🔑 ${escHtml(kws)}</div>` : ''}
+            </td>
+            <td>${badge}</td>
+            <td><span class="range-val">${a.min} → ${a.max}</span></td>
+            <td>
+                <span class="color-dot" style="background:${a.color || '#888'}"></span>
+                <span class="color-dot" style="background:${a.color2 || '#888'};margin-left:4px"></span>
+            </td>
+            <td><div class="action-btns">
+                <button class="btn-icon edit" onclick='openModal("${a.id}")'>✏️</button>
+                <button class="btn-icon del"  onclick='confirmDelete("${a.id}")'>🗑️</button>
+            </div></td>
+        </tr>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allAchievements.length;
+            document.getElementById('stat-normal').textContent = allAchievements.filter(a => a.min >= 0 && a.max <= 100).length;
+            document.getElementById('stat-secret').textContent = allAchievements.filter(a => a.min > 100 || a.max > 100 || a.min < 0).length;
+            document.getElementById('stat-users').textContent = allUsers.length || '—';
+        }
+
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById('modal-title').textContent = id ? '✏️ Editar Conquista' : '✨ Nova Conquista';
+            const a = id ? (allAchievements.find(x => x.id === id) || {}) : {};
+            document.getElementById('f-tier').value = a.tier || '';
+            document.getElementById('f-desc').value = a.desc || '';
+            document.getElementById('f-min').value = a.min ?? '';
+            document.getElementById('f-max').value = a.max ?? '';
+            document.getElementById('f-color1').value = a.color || '#9b59f0';
+            document.getElementById('f-color2').value = a.color2 || '#e84393';
+            document.getElementById('f-traits').value = (a.traits || []).join(', ');
+            document.getElementById('f-keywords').value = (a.keywords || []).join(', ');
+            document.getElementById('f-fixed-score').value = a.fixedScore !== undefined ? a.fixedScore : '';
+            document.getElementById('f-hint').value = a.hint || '';
+            updateColorPreview();
+            document.getElementById('modal-overlay').classList.add('open');
+        }
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingId = null; }
+        function closeModalIfBg(e) { if (e.target.id === 'modal-overlay') closeModal(); }
+        function updateColorPreview() {
+            document.getElementById('preview-color1').style.background = document.getElementById('f-color1').value;
+            document.getElementById('preview-color2').style.background = document.getElementById('f-color2').value;
+        }
+
+        async function saveAchievement(e) {
+            e.preventDefault();
+            const rawFixed = document.getElementById('f-fixed-score').value;
+            const data = {
+                tier: document.getElementById('f-tier').value.trim(),
+                desc: document.getElementById('f-desc').value.trim(),
+                min: parseInt(document.getElementById('f-min').value),
+                max: parseInt(document.getElementById('f-max').value),
+                color: document.getElementById('f-color1').value,
+                color2: document.getElementById('f-color2').value,
+                traits: document.getElementById('f-traits').value.split(',').map(t => t.trim()).filter(Boolean),
+                keywords: document.getElementById('f-keywords').value.split(/[\n,]/).map(k => k.trim()).filter(Boolean),
+                hint: document.getElementById('f-hint').value.trim(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            };
+            if (rawFixed !== '') data.fixedScore = parseInt(rawFixed);
+            if (data.min > data.max) { toast('⚠️', 'Score Mínimo não pode ser maior que Máximo.', 'error'); return; }
+            try {
+                if (editingId) {
+                    await db.collection('achievements').doc(editingId).update(data);
+                    const i = allAchievements.findIndex(a => a.id === editingId);
+                    if (i >= 0) allAchievements[i] = { id: editingId, ...data };
+                    toast('✅', 'Conquista atualizada!', 'success');
+                } else {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    const ref = await db.collection('achievements').add(data);
+                    allAchievements.push({ id: ref.id, ...data });
+                    toast('🎉', 'Nova conquista criada!', 'success');
+                }
+                closeModal(); renderTable(); updateStats();
+            } catch (err) {
+                toast('❌', 'Erro ao salvar: ' + err.message, 'error');
+            }
+        }
+
+        function confirmDelete(id) {
+            const a = allAchievements.find(x => x.id === id);
+            document.getElementById('confirm-text').innerHTML = `Vai excluir <strong>"${escHtml(a?.tier || id)}"</strong> e remover de todos os usuários. Ação irreversível.`;
+            document.getElementById('btn-confirm-del').onclick = () => deleteAchievement(id);
+            document.getElementById('confirm-overlay').classList.add('open');
+        }
+
+        async function deleteAchievement(id) {
+            document.getElementById('confirm-overlay').classList.remove('open');
+            const tierName = allAchievements.find(a => a.id === id)?.tier;
+            try {
+                await db.collection('achievements').doc(id).delete();
+                allAchievements = allAchievements.filter(a => a.id !== id);
+                if (tierName) {
+                    toast('⏳', 'Removendo dos usuários...', 'success');
+                    const snap = await db.collection('users').get();
+                    const batch = db.batch();
+                    let count = 0;
+                    snap.forEach(doc => {
+                        if (doc.data().achievements?.[tierName] !== undefined) {
+                            batch.update(doc.ref, { [`achievements.${tierName}`]: firebase.firestore.FieldValue.delete() });
+                            count++;
+                        }
+                    });
+                    if (count > 0) await batch.commit();
+                    allUsers.forEach(u => { if (u.achievements) delete u.achievements[tierName]; });
+                    toast('🗑️', `Excluída e removida de ${count} usuário(s).`, 'success');
+                } else {
+                    toast('🗑️', 'Conquista excluída.', 'success');
+                }
+                renderTable(); updateStats(); renderUsers();
+            } catch (err) {
+                toast('❌', 'Erro ao excluir: ' + err.message, 'error');
+            }
+        }
+
+        // ══════════════════════════════════════
+        //  USUÁRIOS
+        // ══════════════════════════════════════
+        async function loadUsers() {
+            document.getElementById('users-body').innerHTML = '<tr class="loading-row"><td colspan="4"><div class="spinner"></div></td></tr>';
+            try {
+                const snap = await db.collection('users').get();
+                allUsers = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+                allUsers.sort((a, b) => Object.keys(b.achievements || {}).length - Object.keys(a.achievements || {}).length);
+                renderUsers();
+                updateStats();
+            } catch (e) {
+                document.getElementById('users-body').innerHTML = `<tr><td colspan="4"><div class="empty"><div class="icon">⚠️</div><div>Erro ao carregar usuários.<br>Verifique as regras do Firestore.</div></div></td></tr>`;
+            }
+        }
+
+        function renderUsers() {
+            const q = document.getElementById('user-search').value.toLowerCase();
+            const list = allUsers.filter(u => {
+                const name = (u.rankName || u.displayName || '').toLowerCase();
+                return !q || name.includes(q);
+            });
+            const tbody = document.getElementById('users-body');
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="4"><div class="empty"><div class="icon">👤</div><div>Nenhum usuário encontrado</div></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(u => {
+                const name = escHtml(u.rankName || u.displayName || 'Anônimo');
+                const avatar = u.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.rankName || u.displayName || '?')}&background=6c5ce7&color=fff&size=64`;
+                const achs = Object.keys(u.achievements || {});
+                const chips = achs.slice(0, 4).map(a =>
+                    `<span class="ach-chip">${escHtml(a.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F\u200D]+/gu, '').trim())}</span>`
+                ).join('') + (achs.length > 4 ? `<span class="ach-chip">+${achs.length - 4}</span>` : '');
+                return `<tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <img class="user-avatar" src="${avatar}" alt="">
+                    <div>
+                        <div class="user-name">${name}</div>
+                        <div class="user-sub">${escHtml(u.displayName || '')} ${u.rankName && u.rankName !== u.displayName ? '(' + escHtml(u.displayName || '') + ')' : ''}</div>
+                        <div class="user-sub" style="opacity:.5;font-size:.67rem">${u.uid}</div>
+                    </div>
+                </div>
+            </td>
+            <td><span class="badge-count">🏆 ${achs.length}</span></td>
+            <td><div class="ach-chips">${chips || '<span style="color:var(--muted);font-size:.8rem">Nenhuma</span>'}</div></td>
+            <td><div class="action-btns">
+                <button class="btn-icon edit" title="Editar" onclick='openUserModal("${u.uid}")'>✏️</button>
+            </div></td>
+        </tr>`;
+            }).join('');
+        }
+
+        function openUserModal(uid) {
+            const u = allUsers.find(x => x.uid === uid);
+            if (!u) return;
+            editingUserId = uid;
+            document.getElementById('um-title').textContent = '👤 ' + (u.rankName || u.displayName || 'Usuário');
+            document.getElementById('um-avatar').src = u.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.rankName || u.displayName || '?')}&background=6c5ce7&color=fff&size=64`;
+            document.getElementById('um-email').textContent = (u.displayName || '') + (u.displayName ? ' — ' : '') + u.uid;
+            document.getElementById('um-rankname').value = u.rankName || u.displayName || '';
+
+            const userAchs = u.achievements || {};
+            document.getElementById('um-ach-grid').innerHTML = allAchievements.map(a => {
+                const has = userAchs[a.tier] !== undefined;
+                return `<label class="ach-toggle ${has ? 'has' : ''}">
+            <input type="checkbox" ${has ? 'checked' : ''} data-tier="${escHtml(a.tier)}" onchange="this.closest('.ach-toggle').classList.toggle('has',this.checked)">
+            <span class="ach-toggle-name">${escHtml(a.tier)}</span>
+        </label>`;
+            }).join('');
+
+            document.getElementById('user-modal-overlay').classList.add('open');
+        }
+        function closeUserModal() { document.getElementById('user-modal-overlay').classList.remove('open'); editingUserId = null; }
+        function closeUserModalIfBg(e) { if (e.target.id === 'user-modal-overlay') closeUserModal(); }
+
+        async function saveUser() {
+            const u = allUsers.find(x => x.uid === editingUserId);
+            if (!u) return;
+            const newRankName = document.getElementById('um-rankname').value.trim();
+
+            // Reconstrói achievements com base nos checkboxes
+            const newAchs = {};
+            document.querySelectorAll('#um-ach-grid input[type=checkbox]').forEach(cb => {
+                if (cb.checked) newAchs[cb.dataset.tier] = u.achievements?.[cb.dataset.tier] || Date.now();
+            });
+
+            try {
+                await db.collection('users').doc(editingUserId).update({
+                    rankName: newRankName,
+                    achievements: newAchs
+                });
+                const i = allUsers.findIndex(x => x.uid === editingUserId);
+                if (i >= 0) { allUsers[i].rankName = newRankName; allUsers[i].achievements = newAchs; }
+                toast('✅', 'Usuário atualizado!', 'success');
+                closeUserModal();
+                renderUsers();
+            } catch (err) {
+                toast('❌', 'Erro ao salvar usuário: ' + err.message, 'error');
+            }
+        }
+
+        // ── Utils ──
+        function toast(icon, msg, type = 'success') {
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-text">${msg}</span>`;
+            document.getElementById('toast-stack').appendChild(el);
+            setTimeout(() => el.remove(), 4500);
+        }
+        function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        updateColorPreview();
+    </script>
+</body>
+
+</html>

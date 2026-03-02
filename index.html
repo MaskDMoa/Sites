@@ -1780,8 +1780,52 @@
         }
 
         // ========== Achievements System ==========
-        // Hints vêm do Firestore (campo 'hint' de cada conquista)
-        const achievementHints = {};
+        const achievementHints = {
+            'Aura de Pedra 🪨': 'Às vezes, menos é mais...',
+            'Aura Nebulosa 🌫️': 'Explore diferentes categorias',
+            'Aura Crescente 🌙': 'Continue tentando novas combinações',
+            'Aura Brilhante ⭐': 'A sorte favorece os persistentes',
+            'Aura de Fogo 🔥': 'Paixão gera energia poderosa',
+            'Aura Transcendental 🌌': 'Poucos alcançam este nível...',
+            'Aura Divina 👑': 'O topo é para poucos escolhidos',
+            'Aura do Pão de Queijo 🧀✨': 'Algo delicioso de Minas Gerais...',
+            'Aura Brainrot 🧠🪱': 'Cuidado com os memes de 2024...',
+            'Aura das Trevas 💀': 'Não fale mal do que é sagrado!',
+            'Aura de DIO 🧛⏰': 'Pare o tempo com uma referência vampiresca',
+            'Aura de Jotaro ⭐🟣': 'Um delinquente com espírito de luta',
+            'Aura de Giorno 🟡🎹': 'Eu tenho um sonho...',
+            'Aura de Speedwagon ❤️🎩': 'A melhor waifu de todos os tempos',
+            'Aura Bizarre ✨💎': 'Uma aventura muito... bizarra',
+            'Aura Saiyajin 🐉⚡': 'KAAAA-MEEE... você sabe o resto',
+            'Aura Ninja 🍥🌀': 'Acredite no caminho ninja!',
+            'Aura do Rei dos Piratas 🏴‍☠️🗺️': 'O tesouro mais lendário dos mares',
+            'Aura do Titã ⚔️🏰': 'Dedique seu coração pela humanidade',
+            'Aura Jujutsu 👁️💀': 'Expanda seus domínios...',
+            'Aura PLUS ULTRA 💚⚡': 'Vá além dos seus limites!',
+            'Aura de Um Soco 👊😐': 'OK. Apenas um soco basta...',
+            'Aura Respiração do Sol 🔥⚔️': 'Respire como um caçador lendário',
+            'Aura do Death Note 📓✍️': 'Escreva o nome... da justiça',
+            'Aura Otaku Supremo 🌸✨': 'Abraça a cultura 2D com orgulho',
+            'Aura Rickroll 🎤🕺': 'Never gonna... você conhece essa',
+            'Aura Heisenberg 🧪💎': 'Diga meu nome! Cristal azul 99.1%',
+            'Aura do Infinito ⚡🫰': 'Perfeitamente balanceado, como deveria ser',
+            'Aura GigaChad 🗿💪': 'Seja baseado. Seja o average enjoyer.',
+            'Aura Gamer 🎮👑': 'GG EZ! É tudo questão de skill',
+            'Aura Internet Clássica 💾🌐': 'Memórias da era de ouro da internet',
+            'Aura do Sofrimento ☕🔥': 'Tá tudo bem... (não tá)',
+            'Aura Society 🃏🌃': 'Vivemos numa sociedade...',
+            "Aura Morbin' Time 🦇🧛": 'É hora de morbinar!',
+            'Aura CJ 🚗💨': 'Ah droga, aqui vamos nós de novo...',
+            'Aura da Terra Média 🧙💍': 'Nem todos que vagam estão perdidos...',
+            'Aura de Hogwarts 🧙‍♂️⚡': 'Use o feitiço certo!',
+            'Aura do Tolo Acima da Névoa 🎭🌫️': 'Acima da névoa, o tarot guide...',
+            'Aura de Arrakis 🏜️🪱': 'O medo é o assassino da mente',
+            'Aura 1984 👁️📺': 'O Grande Irmão está observando...',
+            'Aura do PADORU ☃️🎄': 'HASHIRE SORI YO...',
+            'Aura Meme Suprema 🗿👑': 'Transcenda através do poder meme',
+            'Aura do Pacto Selado ⚔️🔮': 'Sele um pacto com sua lâmina',
+            "IT'S OVER 9000!!! 💥": 'O número que quebra os scouters!',
+        };
 
         async function loadAchievements() {
             if (!currentUser) return;
@@ -1907,18 +1951,19 @@
 
         async function loadFirestoreAchievements() {
             try {
-                const snap = await db.collection('achievements').orderBy('min').get();
+                const snap = await db.collection('achievements').get();
                 firestoreAchievements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                // Popula auraTiers e achievementHints completamente do Firestore
-                auraTiers = firestoreAchievements.map(fa => ({
-                    min: fa.min,
-                    max: fa.max,
-                    tier: fa.tier,
-                    desc: fa.desc,
-                    color: fa.color,
-                    color2: fa.color2,
-                    traits: fa.traits || [],
-                }));
+                // Mescla com auraTiers: conquistas do Firestore sobrescrevem pelo tier name,
+                // e as novas são adicionadas ao array em memória
+                firestoreAchievements.forEach(fa => {
+                    const idx = auraTiers.findIndex(t => t.tier === fa.tier);
+                    if (idx >= 0) {
+                        auraTiers[idx] = { ...auraTiers[idx], ...fa }; // atualiza existente
+                    } else {
+                        auraTiers.push(fa); // adiciona nova
+                    }
+                });
+                // Atualiza hints com os do Firestore
                 firestoreAchievements.forEach(fa => {
                     if (fa.hint) achievementHints[fa.tier] = fa.hint;
                 });
@@ -2093,8 +2138,70 @@
             return Math.abs(hash);
         }
 
-        // auraTiers é populado pelo Firestore via loadFirestoreAchievements()
-        let auraTiers = [];
+        const auraTiers = [
+            // === Tiers secretos negativos ===
+            { min: -200, max: -100, tier: 'Aura Brainrot 🧠🪱', desc: 'SKIBIDI SIGMA OHIO... Sua aura foi completamente consumida pelo brainrot. Não há mais salvação.', color: '#1e272e', color2: '#485460', traits: ['Brainrot', 'Cringe Máximo', 'Gen Alpha', 'Irrecuperável', '🚽'] },
+            { min: -99, max: -1, tier: 'Aura das Trevas 💀', desc: 'Você ousou falar mal do pão de queijo... As forças cósmicas te condenam!', color: '#2d3436', color2: '#636e72', traits: ['Herege', 'Sem Paladar', 'Amaldiçoado', 'Anti-Queijo'] },
+            // === Tiers normais ===
+            { min: 0, max: 15, tier: 'Aura de Pedra 🪨', desc: 'Sua aura está em modo hibernação... Talvez um café ajude!', color: '#636e72', color2: '#b2bec3', traits: ['Introvertido', 'Misterioso', 'Reservado'] },
+            { min: 16, max: 30, tier: 'Aura Nebulosa 🌫️', desc: 'Sua aura é como uma névoa... bonita, mas difícil de entender.', color: '#74b9ff', color2: '#a29bfe', traits: ['Pensativo', 'Calmo', 'Sonhador'] },
+            { min: 31, max: 45, tier: 'Aura Crescente 🌙', desc: 'Sua aura está crescendo como a lua! Tem potencial cósmico guardado.', color: '#81ecec', color2: '#00cec9', traits: ['Determinado', 'Curioso', 'Resiliente'] },
+            { min: 46, max: 60, tier: 'Aura Brilhante ⭐', desc: 'Você brilha naturalmente! As pessoas sentem sua presença ao entrar no recinto.', color: '#fdcb6e', color2: '#ffeaa7', traits: ['Carismático', 'Confiante', 'Magnético'] },
+            { min: 61, max: 75, tier: 'Aura de Fogo 🔥', desc: 'Sua aura é puro fogo! Você é uma força da natureza que inspira todos ao redor.', color: '#e17055', color2: '#fab1a0', traits: ['Intenso', 'Apaixonado', 'Líder'] },
+            { min: 76, max: 89, tier: 'Aura Transcendental 🌌', desc: 'Poucos alcançam esse nível! Sua energia transcende dimensões.', color: '#a29bfe', color2: '#6c5ce7', traits: ['Visionário', 'Sábio', 'Poderoso'] },
+            { min: 90, max: 100, tier: 'Aura Divina 👑', desc: 'LENDÁRIO! Sua aura é tão poderosa que distorce a realidade ao seu redor!', color: '#fdcb6e', color2: '#e84393', traits: ['Lendário', 'Divino', 'Inigualável', 'Supremo'] },
+
+            // ============================
+            // === TIERS SECRETOS ===
+            // ============================
+
+            // --- Pão de Queijo ---
+            { min: 101, max: 200, tier: 'Aura do Pão de Queijo 🧀✨', desc: 'A SAGRADA AURA DO PÃO DE QUEIJO! Você é uma pessoa de cultura refinada e paladar impecável!', color: '#f9ca24', color2: '#f0932b', traits: ['Mineiro Raiz', 'Abençoado', 'Paladar Divino', 'Queijólatra'] },
+
+            // --- JoJo individuais ---
+            { min: 301, max: 301, tier: 'Aura de DIO 🧛⏰', desc: 'KONO DIO DA! O tempo parou! Sua aura é a de um vampiro imortal que transcende a humanidade. WRYYYY!', color: '#f9ca24', color2: '#e74c3c', traits: ['Vampiro Imortal', 'Za Warudo', 'WRYYY', 'Rejeita Humanidade', 'MUDA MUDA'] },
+            { min: 302, max: 302, tier: 'Aura de Jotaro ⭐🟣', desc: 'Yare yare daze... Sua aura é fria como gelo, mas explode com a força de Star Platinum! ORA ORA ORA!', color: '#3742fa', color2: '#6c5ce7', traits: ['Star Platinum', 'ORA ORA', 'Yare Yare', 'Delinquente', 'Marinheiro'] },
+            { min: 303, max: 303, tier: 'Aura de Giorno 🟡🎹', desc: 'Eu, Giorno Giovanna, tenho um sonho! Sua aura brilha com Golden Experience Requiem. Infinito poder!', color: '#f9ca24', color2: '#6c5ce7', traits: ['Golden Experience', 'Sonhador', 'Gang-Star', 'Requiem', 'Piano Theme'] },
+            { min: 304, max: 304, tier: 'Aura de Speedwagon ❤️🎩', desc: 'Até o gelo do coração derrete com essa aura! Speedwagon é a melhor waifu e você sabe disso!', color: '#e84393', color2: '#fd79a8', traits: ['Melhor Waifu', 'Fundação SPW', 'Cavalheiro', 'Coração Quente', 'Leal'] },
+            { min: 305, max: 305, tier: 'Aura Bizarre ✨💎', desc: 'ゴゴゴゴ... Sua Aventura Bizarra começou! Você é um Stand User e atrai outros Stand Users!', color: '#6c5ce7', color2: '#a29bfe', traits: ['Stand User', 'Bizarre', 'ゴゴゴゴ', 'Hamon', 'Menacing'] },
+
+            // --- Anime individuais ---
+            { min: 401, max: 401, tier: 'Aura Saiyajin 🐉⚡', desc: 'KAAAA-MEEE-HAAA-MEEE-HAAAAAA! Sua aura explode como um Super Saiyajin! Todos os scouters quebraram!', color: '#f39c12', color2: '#e74c3c', traits: ['Super Saiyajin', 'Poder de Luta', 'Kamehameha', 'Zenkai Boost', 'Kakarot'] },
+            { min: 402, max: 402, tier: 'Aura Ninja 🍥🌀', desc: 'DATTEBAYO! Sua aura carrega a Vontade do Fogo! O caminho ninja nunca volta atrás!', color: '#e67e22', color2: '#d35400', traits: ['Hokage', 'Rasengan', 'Talk no Jutsu', 'Dattebayo', 'Vontade do Fogo'] },
+            { min: 403, max: 403, tier: 'Aura do Rei dos Piratas 🏴‍☠️🗺️', desc: 'O ONE PIECE É REAL! Sua aura carrega o espírito de liberdade! Gear 5 awakened!', color: '#e74c3c', color2: '#f39c12', traits: ['Rei dos Piratas', 'Gear 5', 'Gomu Gomu', 'Nakama', 'Liberdade'] },
+            { min: 404, max: 404, tier: 'Aura do Titã ⚔️🏰', desc: 'SHINZOU WO SASAGEYO! Sua aura é a de quem luta pela liberdade da humanidade! TATAKAE!', color: '#2d3436', color2: '#636e72', traits: ['Tatakae', 'Sasageyo', 'Liberdade', 'Titã', 'Asas da Liberdade'] },
+            { min: 405, max: 405, tier: 'Aura Jujutsu 👁️💀', desc: 'DOMAIN EXPANSION! Sua aura amaldiçoada está no nível de um feiticeiro especial! Hollow Purple!', color: '#6c5ce7', color2: '#0984e3', traits: ['Feiticeiro Especial', 'Domain Expansion', 'Energia Amaldiçoada', 'Infinity', 'Hollow Purple'] },
+            { min: 406, max: 406, tier: 'Aura PLUS ULTRA 💚⚡', desc: 'PLUS ULTRA!!! Sua aura vai além dos limites! United States of SMAAASH!', color: '#00b894', color2: '#00cec9', traits: ['Plus Ultra', 'Symbol of Peace', 'One For All', 'SMASH!', 'Hero nº1'] },
+            { min: 407, max: 407, tier: 'Aura de Um Soco 👊😐', desc: 'OK. Um soco é tudo que você precisa. Sua aura é tão absurda que causa tédio existencial.', color: '#fdcb6e', color2: '#ffeaa7', traits: ['Careca Poderoso', 'Sério Punch', 'OK', 'Tédio Existencial', '100 Flexões/Dia'] },
+            { min: 408, max: 408, tier: 'Aura Respiração do Sol 🔥⚔️', desc: 'HINOKAMI KAGURA! Sua aura queima como as chamas do Sol! A lâmina se torna carmesim!', color: '#e74c3c', color2: '#f39c12', traits: ['Caçador de Demônios', 'Hinokami Kagura', 'Respiração Solar', 'Lâmina Nichirin', 'Gonpachiro'] },
+            { min: 409, max: 409, tier: 'Aura do Death Note 📓✍️', desc: 'Eu sou a justiça! Sua aura carrega o poder de um deus da morte. O nome foi escrito!', color: '#2d3436', color2: '#d63031', traits: ['Kira', 'Justiça', 'Shinigami', 'Keikaku Doori', 'Eu Tomarei Batatas'] },
+            { min: 410, max: 410, tier: 'Aura Otaku Supremo 🌸✨', desc: 'Sua aura emana cultura japonesa pura! Você transcendeu o 3D e abraçou o 2D!', color: '#fd79a8', color2: '#e84393', traits: ['Otaku Raiz', 'Sugoi', 'Cultura 2D', 'Body Pillow', 'Isekai Material'] },
+
+            // --- Memes individuais ---
+            { min: 501, max: 501, tier: 'Aura Rickroll 🎤🕺', desc: 'Never gonna give you up! Never gonna let you down! Sua aura é uma armadilha musical ETERNA!', color: '#e17055', color2: '#fab1a0', traits: ['Never Gonna', 'Let You Down', 'Rick Astley', 'Trollador', 'Música Eterna'] },
+            { min: 502, max: 502, tier: 'Aura Heisenberg 🧪💎', desc: 'Say my name. Sua aura é pura como cristal azul 99.1%! Você é aquele que bate na porta!', color: '#0984e3', color2: '#74b9ff', traits: ['Heisenberg', 'I Am The Danger', 'Crystal Blue', 'Chemistry', 'Jesse!'] },
+            { min: 503, max: 503, tier: 'Aura do Infinito ⚡🫰', desc: 'Eu sou inevitável! Sua aura está perfeitamente balanceada, como tudo deveria ser. *snap*', color: '#6c5ce7', color2: '#a29bfe', traits: ['Inevitável', 'Perfectly Balanced', 'Snap', 'Infinity Stones', 'Universo'] },
+            { min: 504, max: 504, tier: 'Aura GigaChad 🗿💪', desc: 'Average fan vs Average enjoyer. Sua aura é tão BASED que a realidade se curva ao seu chad!', color: '#2d3436', color2: '#dfe6e9', traits: ['GigaChad', 'Based', 'Enjoyer', '🗿', 'Alpha Supremo'] },
+            { min: 505, max: 505, tier: 'Aura Gamer 🎮👑', desc: 'GG WP EZ CLAP! Sua aura é 100% skill, 0% luck. Todo mundo tem um skill issue, menos você!', color: '#00b894', color2: '#55efc4', traits: ['Pro Player', 'GG EZ', 'No Skill Issue', 'Clutch Master', 'Git Gud'] },
+            { min: 506, max: 506, tier: 'Aura Internet Clássica 💾🌐', desc: 'All your base are belong to us! Sua aura é da era de ouro da internet! The cake is a lie!', color: '#636e72', color2: '#b2bec3', traits: ['OG Internet', 'The Cake Is A Lie', 'All Your Base', 'Leet Speak', 'Vintage'] },
+            { min: 507, max: 507, tier: 'Aura do Sofrimento ☕🔥', desc: 'This is fine. Tudo está pegando fogo mas sua aura está tranquila. Why are we still here? Just to suffer.', color: '#e17055', color2: '#fdcb6e', traits: ['This Is Fine', 'Sofredor', 'Café & Caos', 'Just To Suffer', 'Resiliência Meme'] },
+            { min: 508, max: 508, tier: 'Aura Society 🃏🌃', desc: 'Vivemos em uma sociedade. Sua aura entende que ninguém pergunta "como é o Joker?" Profundo!', color: '#00b894', color2: '#6c5ce7', traits: ['Vivemos Numa Sociedade', 'Profundo', 'Joker', 'Bottom Text', 'Filosofia Meme'] },
+            { min: 509, max: 509, tier: 'Aura Morbin\' Time 🦇🧛', desc: 'IT\'S MORBIN TIME! Sua aura é uma das auras de todos os tempos! Verdadeiramente um momento Morbius!', color: '#2d3436', color2: '#636e72', traits: ['Morbin Time', 'Morbillion', 'Filme de Todos os Tempos', 'Morbius Sweep', 'Cult Classic'] },
+            { min: 510, max: 510, tier: 'Aura CJ 🚗💨', desc: 'Ah shit, here we go again. Sua aura domina as ruas de Grove Street! Follow the damn train!', color: '#27ae60', color2: '#2ecc71', traits: ['Grove Street', 'Here We Go Again', 'Big Smoke', 'Follow The Train', 'San Andreas'] },
+
+            // --- Livros / Novels ---
+            { min: 601, max: 601, tier: 'Aura da Terra Média 🧙💍', desc: 'Nem todos que vagam estão perdidos. Sua aura brilha como a luz de Eärendil! Um verdadeiro portador do Anel!', color: '#c8a45c', color2: '#8b6914', traits: ['Portador do Anel', 'Gandalf Aprova', 'Shire', 'Não Passarás', 'Tolkien'] },
+            { min: 602, max: 602, tier: 'Aura de Hogwarts 🧙‍♂️⚡', desc: 'EXPECTO PATRONUM! Sua aura é mágica pura! A varinha te escolheu e Hogwarts é seu lar!', color: '#7b3fa0', color2: '#c56cf0', traits: ['Bruxo', 'Expecto Patronum', 'Hogwarts', 'Always', 'A Varinha Escolhe'] },
+            { min: 603, max: 603, tier: 'Aura do Tolo Acima da Névoa 🎭🌫️', desc: 'Acima da névoa cinza, O Tolo observa tudo. O Tarot Club se reúne! Klein Moretti transcende os Caminhos!', color: '#485460', color2: '#c56cf0', traits: ['O Tolo', 'Beyonder', 'Tarot Club', 'Sequência 0', 'Acima da Névoa'] },
+            { min: 604, max: 604, tier: 'Aura de Arrakis 🏜️🪱', desc: 'O medo é o assassino da mente. A especiaria deve fluir! Sua aura é a de um Kwisatz Haderach!', color: '#f39c12', color2: '#d35400', traits: ['Kwisatz Haderach', 'Especiaria', 'Fremen', 'Shai-Hulud', 'Muad\'Dib'] },
+            { min: 605, max: 605, tier: 'Aura 1984 👁️📺', desc: 'Big Brother is watching. Sua aura é doubleplusgood! Guerra é Paz. Liberdade é Escravidão. Ignorância é Força.', color: '#d63031', color2: '#636e72', traits: ['Big Brother', 'Thoughtcrime', 'Doubleplusgood', 'Novilíngua', 'Orwell'] },
+
+            // --- Especiais ---
+            { min: 777, max: 777, tier: 'Aura do PADORU ☃️🎄', desc: 'HASHIRE SORI YO! A aura natalina ancestral de Nero Claudius infunde seu ser com poder ilimitado! UMU!', color: '#ff6b6b', color2: '#ee5a24', traits: ['Padoru Master', 'Imperador Romano', 'Natalino Eterno', 'UMU!', 'Saber Extra'] },
+            { min: 888, max: 888, tier: 'Aura Meme Suprema 🗿👑', desc: 'Você transcendeu a existência mortal através do poder dos memes. A internet se curva perante você.', color: '#ffeaa7', color2: '#fdcb6e', traits: ['Meme Lord', 'Lendário', '🗿', 'Cultura Pura', 'Baseado'] },
+            { min: 999, max: 999, tier: 'Aura do Pacto Selado ⚔️🔮', desc: 'O pacto foi selado. Sua lâmina e seu destino agora são um só. A aura de um verdadeiro Servant!', color: '#c56cf0', color2: '#3742fa', traits: ['Servant', 'Guardião', 'Lâmina Eterna', 'Destino Selado', 'Noble Phantasm'] },
+            { min: 9001, max: 9001, tier: 'IT\'S OVER 9000!!! 💥', desc: 'WHAT?! 9000?! Sua aura quebrou todos os scouters! Vegeta está tremendo!', color: '#ff9f43', color2: '#ee5a24', traits: ['Saiyajin', 'Scouter Quebrado', 'Kakarot', 'Poder Imensurável'] },
+        ];
 
         function getAuraTier(score) {
             return auraTiers.find(t => score >= t.min && score <= t.max);
@@ -2104,13 +2211,270 @@
         function checkSecretPhrases(text) {
             const lower = text.toLowerCase().trim();
 
-            // Verifica keywords das conquistas do Firestore (admin)
+            // --- Conquistas do Admin (Firestore) ---
+            // Verifica keywords das conquistas criadas pelo painel admin
             for (const fa of firestoreAchievements) {
                 if (!fa.keywords || !fa.keywords.length) continue;
                 const kwList = fa.keywords.map(k => k.toLowerCase().trim()).filter(Boolean);
                 if (kwList.some(kw => lower.includes(kw))) {
+                    // Score fixo do admin, ou usa min como score
                     return fa.fixedScore !== undefined ? fa.fixedScore : fa.min;
                 }
+            }
+
+            // --- Pão de Queijo ---
+            const hasPaoDeQueijo = lower.includes('pão de queijo') || lower.includes('pao de queijo');
+            if (hasPaoDeQueijo) {
+                const negativosWords = ['ruim', 'horrível', 'horrivel', 'nojento', 'nojo', 'odeio', 'odiar',
+                    'péssimo', 'pessimo', 'lixo', 'pior', 'detesto', 'detestar', 'feio',
+                    'não gosto', 'nao gosto', 'nunca mais', 'horroroso', 'sem graça',
+                    'sem graca', 'fraco', 'bosta', 'merda', 'nojeira', 'vomito', 'vômito'];
+                const isNegative = negativosWords.some(word => lower.includes(word));
+                if (isNegative) {
+                    return -(Math.floor(Math.random() * 50) + 10);
+                } else {
+                    return Math.floor(Math.random() * 100) + 101;
+                }
+            }
+
+            // --- Memes Cringe / Brainrot ---
+            const cringePhrases = ['skibidi', 'sigma', 'rizz', 'gyatt', 'ohio', 'fanum tax',
+                'baby gronk', 'gronk', 'looksmaxxing', 'mewing', 'mogging', 'aura check',
+                'edging', 'gooning', 'hawk tuah', 'erm what the sigma', 'what the sigma',
+                'só passinho', 'so passinho', 'griddy', 'the griddy',
+                '0 six seven', 'zero six seven', 'zero seis sete', '0 seis sete',
+                'seis sete', 'six seven'];
+            if (cringePhrases.some(p => lower.includes(p))) {
+                return -(Math.floor(Math.random() * 100) + 100);
+            }
+
+            // --- PADORU (antes do JoJo pra não conflitar com Nero/Fate) ---
+            const padoruPhrases = ['hashire sori yo', 'kaze no you ni', 'tsukimihara wo', 'padoru padoru'];
+            if (padoruPhrases.filter(p => lower.includes(p)).length >= 2 || lower.includes('padoru')) {
+                return 777;
+            }
+
+            // --- Blade Pact ---
+            if (lower.includes('my blade is with you') || lower.includes('our pact is now sealed') ||
+                lower.includes('your fate with me')) {
+                return 999;
+            }
+
+            // ===== JOJO INDIVIDUAIS =====
+            // DIO
+            if (['kono dio da', 'za warudo', 'muda muda', 'wryyyy', 'wryyy', 'dio brando',
+                'road roller', 'you thought it was'].some(p => lower.includes(p))) {
+                return 301;
+            }
+            // Jotaro
+            if (['star platinum', 'ora ora', 'yare yare daze', 'yare yare',
+                'oh you\'re approaching me', 'you\'re approaching me'].some(p => lower.includes(p))) {
+                return 302;
+            }
+            // Giorno
+            if (['giorno', 'golden experience', 'i giorno giovanna have a dream', 'requiem',
+                'gold experience'].some(p => lower.includes(p))) {
+                return 303;
+            }
+            // Speedwagon
+            if (['speedwagon', 'speed wagon', 'melhor waifu', 'best waifu'].some(p => lower.includes(p))) {
+                return 304;
+            }
+            // JoJo genérico
+            if (['jojo', 'jotaro', 'josuke', 'joseph joestar', 'stand power', 'menacing', 'bizarre',
+                'hamon', 'ripple', 'spin', 'killer queen', 'king crimson', 'crazy diamond',
+                'stone ocean', 'steel ball run', 'tusk', 'soft and wet', 'echoes',
+                'is that a jojo', 'jojo reference', 'referencia de jojo', 'dio',
+                'nigerundayo', 'hermit purple', 'silver chariot', 'the hand',
+                'made in heaven', 'bizzare adventure'].some(p => lower.includes(p))) {
+                return 305;
+            }
+
+            // ===== ANIME INDIVIDUAIS =====
+            // Dragon Ball
+            if (['goku', 'vegeta', 'kamehameha', 'ka me ha me ha', 'super saiyan', 'super saiyajin',
+                'ultra instinct', 'instinto superior', 'dragon ball', 'ningen',
+                'it\'s over 9000', 'over 9000', 'mais de 8000', 'kakarot', 'frieza', 'gohan',
+                'genki dama', 'spirit bomb', 'fusion', 'gogeta', 'vegito'].some(p => lower.includes(p))) {
+                return 401;
+            }
+            // Naruto
+            if (['naruto', 'sasuke', 'rasengan', 'chidori', 'dattebayo', 'believe it',
+                'talk no jutsu', 'kage bunshin', 'shadow clone', 'sharingan', 'rinnegan',
+                'byakugan', 'sage mode', 'susanoo', 'amaterasu', 'hokage', 'akatsuki',
+                'itachi', 'kakashi', 'hinata', 'sakura'].some(p => lower.includes(p))) {
+                return 402;
+            }
+            // One Piece
+            if (['luffy', 'zoro', 'one piece', 'gomu gomu', 'gear 5', 'gear fifth',
+                'kaizoku ou', 'pirate king', 'rei dos piratas', 'nakama',
+                'sanji', 'nami', 'chopper', 'brook', 'ace', 'barba branca',
+                'whitebeard', 'shanks', 'haki'].some(p => lower.includes(p))) {
+                return 403;
+            }
+            // Attack on Titan
+            if (['eren', 'mikasa', 'levi', 'sasageyo', 'shinzou wo sasageyo', 'tatakae',
+                'attack on titan', 'shingeki', 'titan', 'rumbling', 'ackerman',
+                'colossal', 'armored titan', 'founding titan', 'erwin'].some(p => lower.includes(p))) {
+                return 404;
+            }
+            // Jujutsu Kaisen
+            if (['gojo', 'domain expansion', 'itadori', 'sukuna', 'jujutsu', 'hollow purple',
+                'infinite void', 'malevolent shrine', 'aoi todo', 'nanami', 'fushiguro',
+                'energia amaldiçoada', 'cursed energy', 'limitless'].some(p => lower.includes(p))) {
+                return 405;
+            }
+            // My Hero Academia
+            if (['plus ultra', 'all might', 'deku', 'detroit smash', 'united states of smash',
+                'full cowling', 'one for all', 'all for one', 'bakugo', 'todoroki',
+                'boku no hero', 'my hero', 'symbol of peace'].some(p => lower.includes(p))) {
+                return 406;
+            }
+            // One Punch Man
+            if (['saitama', 'one punch', 'serious punch', 'serious series',
+                'ok.', 'genos', 'caped baldy', 'careca', 'classe b'].some(p => lower.includes(p))) {
+                return 407;
+            }
+            // Demon Slayer
+            if (['tanjiro', 'nezuko', 'zenitsu', 'inosuke', 'hinokami', 'demon slayer',
+                'kimetsu', 'respiração', 'breathing', 'hashira', 'muzan',
+                'rengoku', 'flame breathing'].some(p => lower.includes(p))) {
+                return 408;
+            }
+            // Death Note
+            if (['death note', 'light yagami', 'kira', 'ryuk', 'shinigami', 'l lawliet',
+                'i am justice', 'eu sou a justiça', 'keikaku', 'just as planned',
+                'i\'ll take a potato chip', 'tomarei batata'].some(p => lower.includes(p))) {
+                return 409;
+            }
+            // Genérico Otaku
+            if (['anime', 'otaku', 'weeb', 'sugoi', 'kawaii', 'senpai', 'sensei', 'baka',
+                'tsundere', 'yamete', 'kisama', 'omae wa mou shindeiru', 'nani',
+                'shounen', 'anime é arte', 'anime is art', 'waifu', 'husbando',
+                'isekai', 'manga', 'tomodachi'].some(p => lower.includes(p))) {
+                return 410;
+            }
+
+            // ===== MEMES INDIVIDUAIS =====
+            // Rickroll
+            if (['never gonna give you up', 'rickroll', 'rick roll', 'rick astley',
+                'you know the rules', 'never gonna let you down'].some(p => lower.includes(p))) {
+                return 501;
+            }
+            // Breaking Bad
+            if (['walter white', 'heisenberg', 'say my name', 'i am the danger',
+                'jesse we need to cook', 'science bitch', 'breaking bad',
+                'better call saul', 'saul goodman', 'los pollos', 'gustavo fring'].some(p => lower.includes(p))) {
+                return 502;
+            }
+            // Marvel / Thanos
+            if (['i am inevitable', 'eu sou inevitável', 'thanos', 'perfectly balanced',
+                'snap', 'infinity', 'avengers assemble', 'wakanda forever', 'i am groot',
+                'i am iron man', 'marvel', 'endgame'].some(p => lower.includes(p))) {
+                return 503;
+            }
+            // GigaChad / Based
+            if (['gigachad', 'chad', 'based', '🗿', 'moyai', 'thug life', 'deal with it',
+                'a man of culture', 'homem de cultura', 'average enjoyer',
+                'i am built different', 'sou diferente'].some(p => lower.includes(p))) {
+                return 504;
+            }
+            // Gamer
+            if (['gg wp', 'ez clap', 'skill issue', 'git gud', 'habilidade issue',
+                'pro player', 'clutch', 'noob', 'spawn kill', 'rage quit',
+                'gamer', 'gaming', 'speedrun', 'world record'].some(p => lower.includes(p))) {
+                return 505;
+            }
+            // Internet Clássica
+            if (['the cake is a lie', 'all your base', 'leeroy jenkins', 'do a barrel roll',
+                'i can has', 'nyan cat', 'trollface', 'rage comic',
+                'pepe', 'feels good man', 'feels bad man', 'doge', 'much wow',
+                'so doge', 'harambe'].some(p => lower.includes(p))) {
+                return 506;
+            }
+            // This is Fine / Sofrimento
+            if (['this is fine', 'why are we still here', 'just to suffer',
+                'todo mundo gangsta', 'ah shit here we go again', 'aqui vamos nós de novo',
+                'pain', 'suffering', 'sofrimento', 'confused unga bunga',
+                'i\'m fine', 'estou bem'].some(p => lower.includes(p))) {
+                return 507;
+            }
+            // Society / Joker
+            if (['we live in a society', 'vivemos em uma sociedade', 'vivemos numa sociedade',
+                'society', 'joker', 'coringa', 'bottom text', 'deep', 'profundo'].some(p => lower.includes(p))) {
+                return 508;
+            }
+            // Morbius
+            if (['it\'s morbin time', 'morbin', 'morbius', 'morbillion',
+                'morbin time', 'morb'].some(p => lower.includes(p))) {
+                return 509;
+            }
+            // GTA / CJ
+            if (['ah shit here we go again', 'grove street', 'follow the damn train',
+                'big smoke', 'san andreas', 'gta', 'cj', 'all you had to do'].some(p => lower.includes(p))) {
+                return 510;
+            }
+
+            // ===== LIVROS / NOVELS =====
+            // Senhor dos Anéis / Tolkien
+            if (['nem todos que vagam', 'not all those who wander', 'not all who wander',
+                'you shall not pass', 'não passarás', 'nao passaras', 'my precious', 'meu precioso',
+                'one ring to rule them all', 'um anel para todos governar',
+                'one does not simply', 'frodo', 'gandalf', 'aragorn', 'legolas', 'gimli',
+                'sauron', 'mordor', 'shire', 'hobbit', 'tolkien', 'senhor dos aneis',
+                'senhor dos anéis', 'lord of the rings', 'gollum', 'smeagol',
+                'bilbo', 'terra média', 'terra media', 'middle earth',
+                'segunda era', 'valinor', 'rohan', 'gondor', 'minas tirith'].some(p => lower.includes(p))) {
+                return 601;
+            }
+            // Harry Potter
+            if (['expecto patronum', 'avada kedavra', 'wingardium leviosa', 'hogwarts',
+                'harry potter', 'dumbledore', 'voldemort', 'always', 'after all this time',
+                'i solemnly swear', 'mischief managed', 'expelliarmus', 'lumos', 'accio',
+                'obliviate', 'gryffindor', 'slytherin', 'hufflepuff', 'ravenclaw',
+                'horcrux', 'deathly hallows', 'reliquias da morte', 'patrono',
+                'snape', 'hermione', 'ron weasley', 'dobby', 'hagrid',
+                'plataforma 9', 'platform 9', 'grifinoria', 'sonserina',
+                'quadribol', 'quidditch', 'comensal da morte', 'death eater'].some(p => lower.includes(p))) {
+                return 602;
+            }
+            // Lord of the Mysteries
+            if (['lord of the mysteries', 'lotm', 'klein moretti', 'the fool', 'o tolo',
+                'tarot club', 'clube do tarot', 'beyonder', 'sequence', 'sequência',
+                'above the gray fog', 'acima da névoa', 'acima da nevoa', 'gray fog', 'névoa cinza',
+                'seer', 'clown', 'marionettist', 'miracle invoker', 'error',
+                'cuttlefish', 'cuttlefish that loves diving', 'cuttlefish lovediving',
+                'amon', 'adam', 'evernight', 'goddess of the night', 'storm lord',
+                'lord of storms', 'hanged man', 'justice', 'audrey hall',
+                'the world', 'derrick berg', 'fors wall', 'emlyn white',
+                'pillar pathway', 'hunter pathway', 'red priest',
+                'mother tree', 'original creator', 'criador original',
+                'sefirot', 'uniqueness', 'characteristic', 'potion',
+                'acting method', 'acting principle', 'método de atuação'].some(p => lower.includes(p))) {
+                return 603;
+            }
+            // Dune
+            if (['fear is the mind killer', 'medo é o assassino', 'the spice must flow',
+                'especiaria deve fluir', 'muad\'dib', 'muad dib', 'dune', 'duna',
+                'arrakis', 'kwisatz haderach', 'bene gesserit', 'paul atreides',
+                'shai-hulud', 'shai hulud', 'fremen', 'sandworm', 'verme da areia',
+                'frank herbert', 'herbert', 'melange', 'litany against fear',
+                'leto atreides', 'chani', 'stilgar', 'harkonnen'].some(p => lower.includes(p))) {
+                return 604;
+            }
+            // 1984 / Orwell
+            if (['big brother', 'grande irmão', 'grande irmao', 'war is peace', 'guerra é paz',
+                'freedom is slavery', 'liberdade é escravidão', 'ignorance is strength',
+                'ignorância é força', '1984', 'orwell', 'george orwell',
+                'doubleplusgood', 'thoughtcrime', 'crimepensamento', 'newspeak', 'novilíngua',
+                'novilingua', 'ministry of truth', 'ministério da verdade',
+                'room 101', 'sala 101', 'two plus two equals five', 'we have always been at war'].some(p => lower.includes(p))) {
+                return 605;
+            }
+
+            // --- Over 9000 numérico ---
+            if (lower === '9000' || lower === '9001') {
+                return 9001;
             }
 
             return null;
@@ -2127,16 +2491,36 @@
                 inputValue = input ? input.value : '';
             }
 
+            // Verifica números especiais (para categoria numero)
             let score;
-            // Verifica keywords do Firestore (inclui números digitados como texto)
-            const secretScore = checkSecretPhrases(inputValue);
+            const numVal = parseInt(inputValue);
 
-            if (secretScore !== null) {
-                score = secretScore;
+            const numberEasterEggs = {
+                // Cringe/Brainrot
+                67: -150, 69: -120, 420: -180, 1337: -110, 666: -160,
+                // JoJo
+                4: 305,     // Mista's unlucky number (JoJo genérico)
+                // Internet Clássica
+                42: 506,    // Answer to life, the universe, and everything
+                // Meme Suprema
+                7: 888, 13: 888, 777: 888,
+                // Over 9000
+                9000: 9001, 9001: 9001,
+            };
+
+            if (currentCategory === 'numero' && numberEasterEggs[numVal] !== undefined) {
+                score = numberEasterEggs[numVal];
             } else {
-                // Score normal com hash + random (0–100)
-                const hash = hashString(inputValue + Date.now().toString());
-                score = (hash % 101);
+                // Verifica frases secretas
+                const secretScore = checkSecretPhrases(inputValue);
+
+                if (secretScore !== null) {
+                    score = secretScore;
+                } else {
+                    // Score normal com hash + random
+                    const hash = hashString(inputValue + Date.now().toString());
+                    score = (hash % 101);
+                }
             }
 
             const isSecret = score > 100 || score < 0;
@@ -2156,12 +2540,7 @@
         }
 
         function displayResult(score) {
-            const tier = getAuraTier(score) || {
-                tier: 'Aura Misteriosa 🌀',
-                desc: 'Sua aura é tão única que transcende qualquer classificação conhecida.',
-                color: '#9b59f0', color2: '#e84393',
-                traits: ['Misterioso', 'Único', 'Indecifrável']
-            };
+            const tier = getAuraTier(score);
 
             // Set colors
             const card = document.getElementById('result-card');
