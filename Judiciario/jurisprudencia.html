@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Jurisprudência — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="prova.html">Provas</a></li>
+                <li><a href="artigos.html">Leis</a></li>
+                <li><a href="jurisprudencia.html" class="active">Jurisprudência</a></li>
+                <li><a href="contratos.html">Contratos</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container fade-in">
+        <div class="page-header">
+            <h1>🏛️ Portal de Jurisprudência</h1>
+            <p>Acompanhe os precedentes, sentenças históricas e decisões relevantes formadas pelos Magistrados e
+                Arcanas.</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div> Carregando Acervo...
+        </div>
+
+        <div id="jurisList" style="display:none; display:grid; gap:1.5rem;"></div>
+
+        <div id="emptyState" class="empty-state" style="display:none;">
+            <div class="empty-icon">🏛️</div>
+            <p>Nenhuma decisão de jurisprudência foi publicada ainda.</p>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        async function loadJurisprudencia() {
+            try {
+                const list = await getJurisprudencias();
+                document.getElementById('loading').style.display = 'none';
+
+                if (list.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                const container = document.getElementById('jurisList');
+                container.style.display = 'grid';
+                container.innerHTML = list.map(j => `
+                    <div class="card" style="border-left: 4px solid var(--accent-blue); padding: 1.5rem;">
+                        <h2 style="color:var(--text-primary); font-size:1.3rem; margin-bottom:0.3rem;">${j.titulo}</h2>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
+                            Relator(a): <strong style="color:var(--gold);">${j.autor}</strong> · Publicado em ${formatDate(j.dataPublicacao)}
+                        </p>
+                        <div style="white-space:pre-wrap; color:var(--text-secondary); line-height:1.7; font-size:0.95rem; background:var(--bg-glass); padding:1rem; border-radius:8px; border:1px solid var(--border-color);">${j.descricao}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                showToast('Falha de conexão. Verifique as regras do Firebase.', 'error');
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        window.onload = loadJurisprudencia;
+    </script>
+</body>
+
+</html>

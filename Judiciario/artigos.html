@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Livro de Artigos — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="prova.html">Provas</a></li>
+                <li><a href="artigos.html" class="active">Leis</a></li>
+                <li><a href="jurisprudencia.html">Jurisprudência</a></li>
+                <li><a href="contratos.html">Contratos</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container fade-in">
+        <div class="page-header">
+            <h1>📜 Livro de Artigos (Regras Oficiais)</h1>
+            <p>Consulte as normas institucionais, hierarquia de advocacia e diretrizes do RPG.</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div> Carregando...
+        </div>
+
+        <div id="artigosList" style="display:none; display:grid; gap:1.5rem;"></div>
+
+        <div id="emptyState" class="empty-state" style="display:none;">
+            <div class="empty-icon">📜</div>
+            <p>O Livro de Artigos ainda não foi preenchido.</p>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        async function loadArtigos() {
+            try {
+                const list = await getArtigos();
+                document.getElementById('loading').style.display = 'none';
+
+                if (list.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                const container = document.getElementById('artigosList');
+                container.style.display = 'grid';
+                container.innerHTML = list.map(a => `
+                    <div class="card" style="border-left: 4px solid var(--gold); padding: 1.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+                            <h2 style="color:var(--text-primary); font-size:1.3rem; margin:0;">${a.titulo}</h2>
+                            <span class="badge badge-gold" style="font-size:0.8rem;">${a.categoria}</span>
+                        </div>
+                        <div style="white-space:pre-wrap; color:var(--text-secondary); line-height:1.7; font-size:0.95rem;">${a.texto}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                showToast('Falha de conexão. Verifique as regras do Firebase.', 'error');
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        window.onload = loadArtigos;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Perfil — Sistema Judiciário Narrativo">
+    <title>👤 Perfil — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html" class="active">Perfil</a></li>
+                <li><a href="prova.html">Provas</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- SEARCH -->
+        <div id="searchSection" class="profile-container fade-in">
+            <div class="page-header">
+                <h1>🔍 Buscar Perfil</h1>
+                <p>Digite o nome para encontrar o perfil de alguém.</p>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Buscar por nome..." oninput="searchDebounce()">
+            </div>
+
+            <div id="searchResults"></div>
+
+            <div id="searchEmpty" class="empty-state" style="display:none;">
+                <div class="empty-icon">🔍</div>
+                <p>Nenhum resultado encontrado.</p>
+            </div>
+        </div>
+
+        <!-- PROFILE VIEW -->
+        <div id="profileSection" style="display:none;" class="profile-container fade-in">
+            <button class="btn btn-secondary" style="margin-bottom:1.5rem;" onclick="backToSearch()">← Voltar</button>
+
+            <div id="profileCard" class="profile-card">
+                <div class="profile-banner" id="profileBanner">
+                    <span class="level-emblem" id="profileEmblem">⚖️</span>
+                </div>
+                <div class="profile-body">
+                    <div class="profile-avatar-area">
+                        <div id="profileAvatar" class="profile-avatar-placeholder">?</div>
+                        <div class="profile-name-area">
+                            <h2 id="profileName">—</h2>
+                            <span class="profile-title" id="profileTitle">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Edit notice -->
+                    <div id="editNotice"
+                        style="margin-bottom:1rem; padding:0.6rem 1rem; background:rgba(212,175,55,0.06); border:1px solid var(--border-color); border-radius:8px; font-size:0.8rem; color:var(--text-secondary); display:none;">
+                        💡 <span id="editNoticeText"></span>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="statJulgamentos">0</div>
+                            <div class="stat-label">Julgamentos</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="statCasos">0</div>
+                            <div class="stat-label">Casos Vencidos</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="statProvas">0</div>
+                            <div class="stat-label">Provas Feitas</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <div class="info-label">Cargo</div>
+                            <div class="info-value" id="infoCargo">—</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="info-label">Nível</div>
+                            <div class="info-value" id="infoNivel">—</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="info-label">Credencial</div>
+                            <div class="info-value" id="infoCredencial">—</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="info-label">Ingresso</div>
+                            <div class="info-value" id="infoIngresso">—</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value" id="infoStatus">—</div>
+                        </div>
+                        <div class="profile-info-item">
+                            <div class="info-label">Título Pessoal</div>
+                            <div class="info-value" id="infoTitulo">—</div>
+                        </div>
+                    </div>
+
+                    <!-- BIO -->
+                    <div id="bioSection" style="margin-top:1.2rem; display:none;">
+                        <div class="profile-info-item" style="grid-column:span 2;">
+                            <div class="info-label">Bio</div>
+                            <div class="info-value" id="infoBio" style="white-space:pre-wrap;">—</div>
+                        </div>
+                    </div>
+
+                    <!-- EDIT BUTTON -->
+                    <div style="margin-top:1.5rem; text-align:center;" id="editBtnArea" style="display:none;">
+                        <button class="btn btn-primary" id="editBtn" onclick="requestEdit()" style="display:none;">✏️
+                            Editar Perfil</button>
+                    </div>
+
+                    <!-- CARTEIRINHA -->
+                    <div class="carteirinha-section" id="carteirinhaSection">
+                        <h3>🎖️ Carteirinha</h3>
+                        <div id="carteirinhaContent">
+                            <div class="carteirinha-placeholder">Nenhuma imagem de carteirinha enviada.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PASSWORD VERIFICATION -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal" style="max-width:380px; text-align:center;">
+            <div class="modal-header">
+                <h2>🔒 Verificação</h2>
+                <button class="modal-close" onclick="closePasswordModal()">&times;</button>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1rem;">Digite sua senha para editar o
+                perfil.</p>
+            <div class="form-group">
+                <input type="password" id="verifyPassword" class="form-control" placeholder="Sua senha..."
+                    onkeydown="if(event.key==='Enter') verifyAndEdit()">
+            </div>
+            <p id="verifyError" style="color:var(--accent-red); font-size:0.85rem; display:none; margin-bottom:0.5rem;">
+            </p>
+            <button class="btn btn-primary" style="width:100%;" onclick="verifyAndEdit()">Verificar</button>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT PROFILE -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Editar Perfil</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form onsubmit="saveProfile(event)">
+                <div class="form-group" id="editNameGroup">
+                    <label>Nome</label>
+                    <input type="text" id="editNome" class="form-control" placeholder="Seu nome">
+                </div>
+                <div class="form-group" id="editBioGroup" style="display:none;">
+                    <label>Bio <span class="badge badge-green" style="font-size:0.65rem;">Pleno+</span></label>
+                    <textarea id="editBio" class="form-control" placeholder="Escreva sobre você..." rows="3"></textarea>
+                </div>
+                <div class="form-group" id="editFotoGroup" style="display:none;">
+                    <label>URL da Foto de Perfil <span class="badge badge-blue"
+                            style="font-size:0.65rem;">Sênior+</span></label>
+                    <input type="url" id="editFoto" class="form-control" placeholder="https://exemplo.com/foto.jpg">
+                    <small style="color:var(--text-muted); font-size:0.75rem;">Cole o link de uma imagem</small>
+                </div>
+                <div class="form-group" id="editTituloGroup" style="display:none;">
+                    <label>Título Pessoal <span class="badge badge-gold"
+                            style="font-size:0.65rem;">Mestre+</span></label>
+                    <input type="text" id="editTitulo" class="form-control" placeholder="Ex: O Justiceiro Arcano">
+                </div>
+                <div class="form-group" id="editCarteirinhaGroup">
+                    <label>URL da Carteirinha</label>
+                    <input type="url" id="editCarteirinha" class="form-control"
+                        placeholder="https://exemplo.com/carteirinha.jpg">
+                </div>
+                <div class="btn-group" style="margin-top:1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        let currentUser = null;
+        let searchTimeout = null;
+        let isOwner = false;
+        let isAdmin = false;
+
+        // Check session
+        const session = getSession();
+        if (session) {
+            isAdmin = session.isAdmin === true;
+        }
+
+        // ========== SEARCH ==========
+        function searchDebounce() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(doSearch, 400);
+        }
+
+        async function doSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query.length < 2) {
+                document.getElementById('searchResults').innerHTML = '';
+                document.getElementById('searchEmpty').style.display = 'none';
+                return;
+            }
+            try {
+                const results = await buscarUsuarioPorNome(query);
+                if (results.length === 0) {
+                    document.getElementById('searchResults').innerHTML = '';
+                    document.getElementById('searchEmpty').style.display = 'block';
+                } else {
+                    document.getElementById('searchEmpty').style.display = 'none';
+                    document.getElementById('searchResults').innerHTML = results.map(u => `
+            <div class="card" style="margin-bottom:0.75rem; cursor:pointer;" onclick="viewProfile('${u.id}')">
+              <div style="display:flex; align-items:center; gap:1rem;">
+                ${u.fotoUrl
+                            ? `<img src="${u.fotoUrl}" class="profile-avatar" style="width:48px;height:48px;border-width:2px;" onerror="this.outerHTML='<div class=\\'profile-avatar-placeholder\\' style=\\'width:48px;height:48px;font-size:1.2rem;border-width:2px;\\'>${u.nome.charAt(0).toUpperCase()}</div>'">`
+                            : `<div class="profile-avatar-placeholder" style="width:48px;height:48px;font-size:1.2rem;border-width:2px;">${u.nome.charAt(0).toUpperCase()}</div>`
+                        }
+                <div style="flex:1;">
+                  <strong>${u.nome}</strong>
+                  <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">${getNivelLabel(u.cargo, u.nivel)}</p>
+                </div>
+                <span class="badge badge-gold">${u.credencial || '—'}</span>
+              </div>
+            </div>
+          `).join('');
+                }
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        // ========== VIEW PROFILE ==========
+        async function viewProfile(id) {
+            try {
+                currentUser = await getUsuario(id);
+                if (!currentUser) { showToast('Não encontrado.', 'error'); return; }
+
+                const u = currentUser;
+                const theme = getLevelTheme(u.nivel);
+                const perms = getLevelPermissions(u.nivel);
+                const card = document.getElementById('profileCard');
+
+                // Check ownership
+                isOwner = session && !session.isAdmin && session.userId === id;
+
+                card.className = `profile-card ${theme}`;
+
+                // Avatar
+                const avatarEl = document.getElementById('profileAvatar');
+                if (u.fotoUrl) {
+                    avatarEl.outerHTML = `<img src="${u.fotoUrl}" class="profile-avatar" id="profileAvatar" onerror="this.outerHTML='<div class=\\'profile-avatar-placeholder\\' id=\\'profileAvatar\\'>${u.nome.charAt(0).toUpperCase()}</div>'">`;
+                } else {
+                    avatarEl.outerHTML = `<div class="profile-avatar-placeholder" id="profileAvatar">${u.nome.charAt(0).toUpperCase()}</div>`;
+                }
+
+                document.getElementById('profileName').textContent = u.nome;
+                document.getElementById('profileTitle').textContent = getNivelLabel(u.cargo, u.nivel);
+
+                const emblems = { advogado: '🛡️', juiz: '⚖️', promotor: '⚔️', conselheiro: '👑', candidato: '📋' };
+                document.getElementById('profileEmblem').textContent = emblems[u.cargo] || '⚖️';
+
+                document.getElementById('statJulgamentos').textContent = u.julgamentos || 0;
+                document.getElementById('statCasos').textContent = u.casosVencidos || 0;
+                try {
+                    const results = await getResultadosPorUsuario(id);
+                    document.getElementById('statProvas').textContent = results.length;
+                } catch { document.getElementById('statProvas').textContent = '0'; }
+
+                document.getElementById('infoCargo').textContent = (u.cargo || '—').charAt(0).toUpperCase() + (u.cargo || '').slice(1);
+                document.getElementById('infoNivel').textContent = (u.nivel || '—').charAt(0).toUpperCase() + (u.nivel || '').slice(1);
+                document.getElementById('infoCredencial').textContent = u.credencial || '—';
+                document.getElementById('infoIngresso').textContent = formatDate(u.dataIngresso);
+                const statusMap = { ativo: '✅ Ativo', suspenso: '⚠️ Suspenso', inativo: '❌ Inativo' };
+                document.getElementById('infoStatus').textContent = statusMap[u.status] || u.status;
+                document.getElementById('infoTitulo').textContent = u.titulo || '—';
+
+                if (u.bio) {
+                    document.getElementById('bioSection').style.display = 'block';
+                    document.getElementById('infoBio').textContent = u.bio;
+                } else {
+                    document.getElementById('bioSection').style.display = 'none';
+                }
+
+                if (u.carteirinhaUrl) {
+                    document.getElementById('carteirinhaContent').innerHTML = `<img src="${u.carteirinhaUrl}" class="carteirinha-img" alt="Carteirinha de ${u.nome}">`;
+                } else {
+                    document.getElementById('carteirinhaContent').innerHTML = `<div class="carteirinha-placeholder">Nenhuma imagem de carteirinha enviada.</div>`;
+                }
+
+                // Edit button — only show for owner or admin
+                const editBtn = document.getElementById('editBtn');
+                const editNotice = document.getElementById('editNotice');
+                if (isOwner || isAdmin) {
+                    editBtn.style.display = 'inline-flex';
+                    editNotice.style.display = 'block';
+                    if (isAdmin) {
+                        document.getElementById('editNoticeText').textContent = '🛡️ Acesso admin — pode editar todos os campos.';
+                    } else {
+                        const unlocked = [];
+                        if (perms.canEditName) unlocked.push('Nome');
+                        if (perms.canEditBio) unlocked.push('Bio');
+                        if (perms.canEditFoto) unlocked.push('Foto');
+                        if (perms.canEditTitulo) unlocked.push('Título');
+                        unlocked.push('Carteirinha');
+                        document.getElementById('editNoticeText').textContent = `Nível ${u.nivel}: Pode editar — ${unlocked.join(', ')}`;
+                    }
+                } else {
+                    editBtn.style.display = 'none';
+                    editNotice.style.display = 'none';
+                }
+
+                document.getElementById('searchSection').style.display = 'none';
+                document.getElementById('profileSection').style.display = 'block';
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        function backToSearch() {
+            document.getElementById('searchSection').style.display = 'block';
+            document.getElementById('profileSection').style.display = 'none';
+            currentUser = null;
+        }
+
+        // ========== EDIT SECURITY ==========
+        function requestEdit() {
+            if (isAdmin) {
+                // Admin can edit directly
+                openEditModal();
+            } else {
+                // User must verify password
+                document.getElementById('verifyPassword').value = '';
+                document.getElementById('verifyError').style.display = 'none';
+                document.getElementById('passwordModal').classList.add('active');
+            }
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        async function verifyAndEdit() {
+            const senha = document.getElementById('verifyPassword').value;
+            const errorEl = document.getElementById('verifyError');
+
+            if (!senha) {
+                errorEl.textContent = 'Digite sua senha.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                const valid = await verificarSenhaUsuario(currentUser.id, senha);
+                if (!valid) {
+                    errorEl.textContent = 'Senha incorreta.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+                closePasswordModal();
+                openEditModal();
+            } catch (e) {
+                errorEl.textContent = 'Erro: ' + e.message;
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function openEditModal() {
+            if (!currentUser) return;
+            const u = currentUser;
+            const perms = isAdmin ? { canEditName: true, canEditBio: true, canEditFoto: true, canEditTitulo: true } : getLevelPermissions(u.nivel);
+
+            document.getElementById('editNome').value = u.nome;
+            document.getElementById('editBio').value = u.bio || '';
+            document.getElementById('editFoto').value = u.fotoUrl || '';
+            document.getElementById('editTitulo').value = u.titulo || '';
+            document.getElementById('editCarteirinha').value = u.carteirinhaUrl || '';
+
+            document.getElementById('editNameGroup').style.display = perms.canEditName ? 'block' : 'none';
+            document.getElementById('editBioGroup').style.display = perms.canEditBio ? 'block' : 'none';
+            document.getElementById('editFotoGroup').style.display = perms.canEditFoto ? 'block' : 'none';
+            document.getElementById('editTituloGroup').style.display = perms.canEditTitulo ? 'block' : 'none';
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        async function saveProfile(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const perms = isAdmin ? { canEditName: true, canEditBio: true, canEditFoto: true, canEditTitulo: true } : getLevelPermissions(currentUser.nivel);
+            const data = {};
+            if (perms.canEditName) data.nome = document.getElementById('editNome').value;
+            if (perms.canEditBio) data.bio = document.getElementById('editBio').value;
+            if (perms.canEditFoto) data.fotoUrl = document.getElementById('editFoto').value;
+            if (perms.canEditTitulo) data.titulo = document.getElementById('editTitulo').value;
+            data.carteirinhaUrl = document.getElementById('editCarteirinha').value;
+
+            try {
+                await updateUsuario(currentUser.id, data);
+                showToast('Perfil atualizado!');
+                closeEditModal();
+                await viewProfile(currentUser.id);
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        // Close modals on backdrop
+        document.querySelectorAll('.modal-overlay').forEach(o => {
+            o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+        });
+
+        // Direct profile access
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('id')) viewProfile(urlParams.get('id'));
+    </script>
+
+</body>
+
+</html>

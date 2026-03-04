@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registro — Quero ser Advogado no Sistema Judiciário Narrativo">
+    <title>📋 Registro — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="prova.html">Provas</a></li>
+                <li><a href="registro.html" class="active">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="exam-container">
+
+            <!-- TABS: Register / Check Status / Login -->
+            <div class="tabs" style="margin-bottom:2rem;">
+                <button class="tab active" data-tab="registro" onclick="switchRegTab('registro')">📋 Quero ser
+                    Advogado</button>
+                <button class="tab" data-tab="status" onclick="switchRegTab('status')">🔍 Ver Status</button>
+                <button class="tab" data-tab="login" onclick="switchRegTab('login')">🔑 Login</button>
+            </div>
+
+            <!-- TAB: REGISTRATION FORM -->
+            <div id="tab-registro" class="tab-content active fade-in">
+                <div class="page-header" style="padding-bottom:1rem;">
+                    <h1>📋 Quero ser Advogado</h1>
+                    <p>Preencha o formulário abaixo para enviar sua solicitação de ingresso ao Sistema Judiciário
+                        Narrativo.</p>
+                </div>
+
+                <div class="card">
+                    <form onsubmit="submitRegistro(event)">
+                        <div class="form-group">
+                            <label>Seu Nome (como quer ser chamado)</label>
+                            <input type="text" id="regNome" class="form-control" placeholder="Ex: João da Silva"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contato (Discord, etc.)</label>
+                            <input type="text" id="regContato" class="form-control" placeholder="Ex: joao#1234 ou @joao"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Por que você quer se tornar Advogado?</label>
+                            <textarea id="regMotivo" class="form-control" rows="4"
+                                placeholder="Explique suas motivações, experiência no RPG, etc." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Crie uma Senha (para acessar seu perfil depois)</label>
+                            <input type="password" id="regSenha" class="form-control" placeholder="Mínimo 4 caracteres"
+                                required minlength="4">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirme a Senha</label>
+                            <input type="password" id="regSenhaConfirm" class="form-control"
+                                placeholder="Digite a senha novamente" required minlength="4">
+                        </div>
+                        <button type="submit" class="btn btn-primary"
+                            style="width:100%; padding:0.8rem; font-size:1rem;" id="regSubmitBtn">
+                            📨 Enviar Solicitação
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-top:1.5rem;">
+                    <div class="card-header">
+                        <div class="card-icon">ℹ️</div>
+                        <h3>Como funciona</h3>
+                    </div>
+                    <ul
+                        style="font-size:0.9rem; color:var(--text-secondary); list-style:none; display:grid; gap:0.5rem;">
+                        <li>1️⃣ Preencha o formulário e crie uma senha</li>
+                        <li>2️⃣ Aguarde a aprovação dos Administradores</li>
+                        <li>3️⃣ Se aprovado, faça login e realize a Prova de Nível 1</li>
+                        <li>4️⃣ Após análise da prova, receba seu cargo de Advogado</li>
+                        <li>⚠️ Sua solicitação pode ser rejeitada — verifique o status</li>
+                    </ul>
+                </div>
+
+                <!-- Success message -->
+                <div id="regSuccess" class="card" style="display:none; margin-top:1.5rem; text-align:center;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">✅</div>
+                    <h3 style="color:var(--accent-green); margin-bottom:0.5rem;">Solicitação Enviada!</h3>
+                    <p style="color:var(--text-secondary);">Aguarde a análise dos administradores. Você pode verificar o
+                        status na aba "Ver Status".</p>
+                </div>
+            </div>
+
+            <!-- TAB: CHECK STATUS -->
+            <div id="tab-status" class="tab-content fade-in">
+                <div class="page-header" style="padding-bottom:1rem;">
+                    <h1>🔍 Verificar Status</h1>
+                    <p>Digite seu nome para consultar o status da sua solicitação.</p>
+                </div>
+
+                <div class="card">
+                    <div class="form-group">
+                        <label>Seu Nome (exatamente como cadastrou)</label>
+                        <input type="text" id="statusNome" class="form-control" placeholder="Seu nome...">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;" onclick="checkStatus()">Consultar</button>
+                </div>
+
+                <div id="statusResult" style="margin-top:1.5rem; display:none;"></div>
+            </div>
+
+            <!-- TAB: LOGIN -->
+            <div id="tab-login" class="tab-content fade-in">
+                <div class="page-header" style="padding-bottom:1rem;">
+                    <h1>🔑 Login</h1>
+                    <p>Faça login para acessar seu perfil e realizar provas.</p>
+                </div>
+
+                <div class="card">
+                    <div class="form-group">
+                        <label>Seu Nome</label>
+                        <input type="text" id="loginNome" class="form-control" placeholder="Seu nome..."
+                            onkeydown="if(event.key==='Enter') doLogin()">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="loginSenha" class="form-control" placeholder="Sua senha..."
+                            onkeydown="if(event.key==='Enter') doLogin()">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Entrar</button>
+                    <p id="loginError"
+                        style="color:var(--accent-red); font-size:0.85rem; margin-top:0.5rem; display:none;"></p>
+                </div>
+
+                <!-- Logged in state -->
+                <div id="loggedInSection" style="display:none; margin-top:1.5rem;">
+                    <div class="card" style="text-align:center;">
+                        <div style="font-size:2.5rem; margin-bottom:0.5rem;">👤</div>
+                        <h3 id="loggedInName" style="color:var(--text-primary);">—</h3>
+                        <p id="loggedInCargo"
+                            style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1rem;">—</p>
+                        <div class="btn-group" style="justify-content:center;">
+                            <a id="loggedInProfileLink" href="#" class="btn btn-primary">Ver Meu Perfil</a>
+                            <a href="prova.html" class="btn btn-secondary">📝 Fazer Prova</a>
+                            <button class="btn btn-danger" onclick="doLogout()">Sair</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        // ========== TAB SWITCHING ==========
+        function switchRegTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        // ========== REGISTRATION ==========
+        async function submitRegistro(e) {
+            e.preventDefault();
+            const nome = document.getElementById('regNome').value.trim();
+            const contato = document.getElementById('regContato').value.trim();
+            const motivo = document.getElementById('regMotivo').value.trim();
+            const senha = document.getElementById('regSenha').value;
+            const senhaConfirm = document.getElementById('regSenhaConfirm').value;
+
+            if (senha !== senhaConfirm) {
+                showToast('As senhas não coincidem!', 'error');
+                return;
+            }
+
+            if (senha.length < 4) {
+                showToast('A senha deve ter pelo menos 4 caracteres!', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('regSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            try {
+                // Check if name already exists
+                const existing = await getSolicitacaoPorNome(nome);
+                if (existing) {
+                    showToast('Já existe uma solicitação com esse nome!', 'error');
+                    btn.disabled = false;
+                    btn.textContent = '📨 Enviar Solicitação';
+                    return;
+                }
+
+                await addSolicitacao({ nome, contato, motivo, senha });
+                showToast('Solicitação enviada com sucesso!');
+                document.getElementById('regSuccess').style.display = 'block';
+                e.target.style.display = 'none';
+            } catch (err) {
+                showToast('Erro: ' + err.message, 'error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = '📨 Enviar Solicitação';
+        }
+
+        // ========== CHECK STATUS ==========
+        async function checkStatus() {
+            const nome = document.getElementById('statusNome').value.trim();
+            if (!nome) {
+                showToast('Digite seu nome!', 'error');
+                return;
+            }
+
+            const resultDiv = document.getElementById('statusResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div> Buscando...</div>';
+
+            try {
+                const sol = await getSolicitacaoPorNome(nome);
+                if (!sol) {
+                    resultDiv.innerHTML = `
+            <div class="card" style="text-align:center;">
+              <div style="font-size:2rem; margin-bottom:0.5rem;">❓</div>
+              <h3 style="color:var(--text-primary);">Nenhuma solicitação encontrada</h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem;">Verifique se digitou o nome exatamente como cadastrou.</p>
+            </div>`;
+                    return;
+                }
+
+                let content = '';
+                if (sol.status === 'pendente') {
+                    content = `
+            <div class="card" style="text-align:center;">
+              <div style="font-size:2.5rem; margin-bottom:0.5rem;">⏳</div>
+              <h3 style="color:var(--gold);">Solicitação Pendente</h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem;">Sua solicitação está sendo analisada pelos administradores. Aguarde!</p>
+              <p style="color:var(--text-muted); font-size:0.8rem; margin-top:0.5rem;">Enviada em: ${formatDate(sol.dataSolicitacao)}</p>
+            </div>`;
+                } else if (sol.status === 'aprovado') {
+                    content = `
+            <div class="card" style="text-align:center;">
+              <div style="font-size:2.5rem; margin-bottom:0.5rem;">🎉</div>
+              <h3 style="color:var(--accent-green);">Aprovado!</h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem;">Sua solicitação foi aprovada! Faça login com seu nome e senha para acessar seu perfil e fazer a prova.</p>
+              <a href="#" onclick="switchRegTab('login')" class="btn btn-primary" style="margin-top:1rem;">🔑 Fazer Login</a>
+            </div>`;
+                } else if (sol.status === 'rejeitado') {
+                    content = `
+            <div class="card" style="text-align:center;">
+              <div style="font-size:2.5rem; margin-bottom:0.5rem;">❌</div>
+              <h3 style="color:var(--accent-red);">Solicitação Rejeitada</h3>
+              <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:0.75rem;">Infelizmente sua solicitação não foi aprovada.</p>
+              <div style="padding:0.8rem; background:rgba(248,113,113,0.08); border-radius:8px; border:1px solid rgba(248,113,113,0.2);">
+                <p style="font-size:0.85rem; color:var(--accent-red);"><strong>Motivo:</strong> ${sol.motivoRejeicao || 'Não informado.'}</p>
+              </div>
+            </div>`;
+                }
+                resultDiv.innerHTML = content;
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="card" style="text-align:center; color:var(--accent-red);">Erro: ${err.message}</div>`;
+            }
+        }
+
+        // ========== LOGIN ==========
+        async function doLogin() {
+            const nome = document.getElementById('loginNome').value.trim();
+            const senha = document.getElementById('loginSenha').value;
+            const errorEl = document.getElementById('loginError');
+            errorEl.style.display = 'none';
+
+            if (!nome || !senha) {
+                errorEl.textContent = 'Preencha nome e senha.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                const result = await loginUsuario(nome, senha);
+                if (!result.success) {
+                    errorEl.textContent = result.error;
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                const user = result.user;
+                setSession(user.id, false);
+
+                // Show logged in state
+                document.querySelector('#tab-login .card').style.display = 'none';
+                document.getElementById('loggedInSection').style.display = 'block';
+                document.getElementById('loggedInName').textContent = user.nome;
+                document.getElementById('loggedInCargo').textContent = getNivelLabel(user.cargo, user.nivel);
+                document.getElementById('loggedInProfileLink').href = `perfil.html?id=${user.id}`;
+
+                showToast(`Bem-vindo, ${user.nome}!`);
+            } catch (err) {
+                errorEl.textContent = 'Erro: ' + err.message;
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function doLogout() {
+            clearSession();
+            document.querySelector('#tab-login .card').style.display = 'block';
+            document.getElementById('loggedInSection').style.display = 'none';
+            document.getElementById('loginNome').value = '';
+            document.getElementById('loginSenha').value = '';
+            showToast('Desconectado.', 'info');
+        }
+
+        // Check existing session
+        const session = getSession();
+        if (session && session.userId) {
+            (async () => {
+                const user = await getUsuario(session.userId);
+                if (user) {
+                    switchRegTab('login');
+                    document.querySelector('#tab-login .card').style.display = 'none';
+                    document.getElementById('loggedInSection').style.display = 'block';
+                    document.getElementById('loggedInName').textContent = user.nome;
+                    document.getElementById('loggedInCargo').textContent = getNivelLabel(user.cargo, user.nivel);
+                    document.getElementById('loggedInProfileLink').href = `perfil.html?id=${user.id}`;
+                }
+            })();
+        }
+    </script>
+
+</body>
+
+</html>

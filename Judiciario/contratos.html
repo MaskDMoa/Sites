@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Contratos — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="prova.html">Provas</a></li>
+                <li><a href="artigos.html">Leis</a></li>
+                <li><a href="jurisprudencia.html">Jurisprudência</a></li>
+                <li><a href="contratos.html" class="active">Contratos</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- NOT LOGGED IN MESSAGE -->
+    <div id="loginWarning" class="container fade-in" style="display:none; text-align:center; padding:3rem 0;">
+        <div class="card" style="max-width:500px; margin:0 auto;">
+            <h2>Autenticação Necessária</h2>
+            <p style="color:var(--text-secondary); margin-top:0.5rem;">Você precisa estar logado para visualizar,
+                assinar ou redigir contratos.</p>
+            <a href="registro.html" class="btn btn-primary" style="margin-top:1.5rem; display:inline-block;">Fazer
+                Login</a>
+        </div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div id="contratoPanel" class="container" style="display:none;">
+        <div class="page-header fade-in">
+            <h1>🤝 Central de Contratos</h1>
+            <p>Redija, assine e consulte os contratos firmados no Sistema Judiciário Narrativo. Contratos assinados por
+                todas as partes devem aguardar homologação administrativa.</p>
+        </div>
+
+        <div class="tabs" id="contratoTabs">
+            <button class="tab active" data-tab="meus-contratos" onclick="switchTab('meus-contratos')">📋 Meus
+                Contratos</button>
+            <button class="tab" data-tab="novo-contrato" onclick="switchTab('novo-contrato')">✍️ Redigir Novo
+                Contrato</button>
+        </div>
+
+        <!-- TAB: MEUS CONTRATOS -->
+        <div id="tab-meus-contratos" class="tab-content active">
+            <div id="loadingMeusContratos" class="loading">
+                <div class="spinner"></div> Carregando seus contratos...
+            </div>
+            <div id="meusContratosList"></div>
+            <div id="meusContratosEmpty" class="empty-state" style="display:none;">
+                <div class="empty-icon">📂</div>
+                <p>Você não possui nenhum contrato ativo.</p>
+            </div>
+        </div>
+
+        <!-- TAB: NOVO CONTRATO -->
+        <div id="tab-novo-contrato" class="tab-content">
+            <div class="card" style="max-width:800px; margin:0 auto;">
+                <h2 style="margin-bottom:1rem;">Redigir Acordo Extrajudicial ou Contrato</h2>
+                <form id="formNovoContrato" onsubmit="submitNovoContrato(event)">
+                    <div class="form-group">
+                        <label>Título do Contrato</label>
+                        <input type="text" id="novoTitulo" class="form-control"
+                            placeholder="Ex: Contrato de Cessão de Direitos" required>
+                    </div>
+
+                    <div class="grid-2" style="gap:1rem; margin-bottom:1rem;">
+                        <div class="form-group" style="margin:0;">
+                            <label>Sua Assinatura (Parte 1)</label>
+                            <input type="text" id="novaParte1" class="form-control" disabled
+                                style="background:var(--bg-lighter);">
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem;">Você assinará
+                                automaticamente ao enviar o rascunho.</p>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label>Outra Parte Envolvida (Parte 2)</label>
+                            <select id="novaParte2" class="form-control" required>
+                                <option value="">Carregando usuários...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Objeto / Texto do Contrato</label>
+                        <textarea id="novoObjeto" class="form-control" rows="8"
+                            placeholder="Escreva as cláusulas e acordos firmados de forma clara..." required></textarea>
+                    </div>
+
+                    <p style="font-size:0.85rem; color:var(--gold); margin-bottom:1.5rem;">
+                        ⚠️ Atenção: Ao salvar, o contrato será enviado para a Parte 2 assinar. Após as assinaturas de
+                        ambas as partes, ele será enviado aos Administradores para homologação definitiva.
+                    </p>
+
+                    <button type="submit" class="btn btn-primary" id="btnSalvarContrato" style="width:100%;">Salvar e
+                        Assinar (Enviar Rascunho)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB: CONTRATOS PÚBLICOS HOMOLOGADOS -->
+        <div style="margin-top:3rem;">
+            <h2 class="section-title">📜 Registro Público de Contratos Homologados</h2>
+            <div id="loadingPublicos" class="loading">
+                <div class="spinner"></div> Carregando...
+            </div>
+            <div id="publicosList" style="display:grid; gap:1rem;"></div>
+            <div id="publicosEmpty" class="empty-state" style="display:none; margin-top:0;">
+                <p>Nenhum contrato público aprovado no momento.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        let currentUser = null;
+        let allContratos = [];
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        async function init() {
+            const session = getSession();
+            if (!session || !session.userId || session.isAdmin) {
+                // If it's an admin just looking around, or a guest, block access to draft contracts.
+                // Well, admins can draft too if they have normal accounts, but `session.isAdmin` means they used the passwordGate.
+                // We'll require a normal user session to draft.
+                document.getElementById('loginWarning').style.display = 'block';
+                return;
+            }
+
+            // We need the user's name
+            currentUser = await getUsuario(session.userId);
+            if (!currentUser) {
+                document.getElementById('loginWarning').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('contratoPanel').style.display = 'block';
+            document.getElementById('novaParte1').value = currentUser.nome;
+
+            // Load data
+            await Promise.all([
+                loadUsuariosForSelect(),
+                loadContratos()
+            ]);
+        }
+
+        async function loadUsuariosForSelect() {
+            try {
+                const limitNames = await getUsuarios();
+                const sel = document.getElementById('novaParte2');
+                sel.innerHTML = '<option value="">Selecione a pessoa...</option>';
+                limitNames.forEach(u => {
+                    if (u.nome !== currentUser.nome && u.status === 'ativo') {
+                        const opt = document.createElement('option');
+                        opt.value = u.nome;
+                        opt.textContent = `${u.nome} (${u.cargo || 'Candidato'})`;
+                        sel.appendChild(opt);
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadContratos() {
+            document.getElementById('loadingMeusContratos').style.display = 'flex';
+            document.getElementById('loadingPublicos').style.display = 'flex';
+
+            try {
+                // To keep it simple, we fetch all contracts and filter on client side.
+                // In a massive app, we would use queries.
+                allContratos = await getContratos();
+
+                renderMeusContratos();
+                renderContratosPublicos();
+            } catch (error) {
+                showToast('Erro ao carregar contratos: ' + error.message, 'error');
+            }
+            document.getElementById('loadingMeusContratos').style.display = 'none';
+            document.getElementById('loadingPublicos').style.display = 'none';
+        }
+
+        function renderMeusContratos() {
+            const list = allContratos.filter(c => c.nomeParte1 === currentUser.nome || c.nomeParte2 === currentUser.nome);
+            if (list.length === 0) {
+                document.getElementById('meusContratosList').innerHTML = '';
+                document.getElementById('meusContratosEmpty').style.display = 'block';
+                return;
+            }
+            document.getElementById('meusContratosEmpty').style.display = 'none';
+
+            document.getElementById('meusContratosList').innerHTML = list.map(c => {
+                const euSouParte1 = c.nomeParte1 === currentUser.nome;
+                const euAssinei = euSouParte1 ? c.assinadoParte1 : c.assinadoParte2;
+                const outraParteAssinou = euSouParte1 ? c.assinadoParte2 : c.assinadoParte1;
+
+                let sBadge = '';
+                if (c.status === 'rascunho') {
+                    if (euAssinei && outraParteAssinou) sBadge = '<span class="badge badge-gold">⏳ Aguardando Revisão</span>';
+                    else if (!euAssinei) sBadge = '<span class="badge badge-red">✍️ Aguardando Sua Assinatura</span>';
+                    else sBadge = '<span class="badge badge-gray">⏳ Aguardando a Outra Parte</span>';
+                } else if (c.status === 'aguardando_revisao') {
+                    sBadge = '<span class="badge badge-gold">⏳ Aguardando Revisão Administrativa</span>';
+                } else if (c.status === 'aprovado') {
+                    sBadge = '<span class="badge badge-green">✅ Oficial Homologado</span>';
+                } else if (c.status === 'rejeitado') {
+                    sBadge = '<span class="badge badge-red">❌ Rejeitado pelo Conselho</span>';
+                }
+
+                return `
+                    <div class="card" style="margin-bottom:1rem; border-left:4px solid var(--accent-purple);">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+                            <h3 style="margin:0; font-size:1.1rem;">${c.titulo}</h3>
+                            ${sBadge}
+                        </div>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+                            <strong>Partes:</strong> ${c.nomeParte1} 
+                            (${c.assinadoParte1 ? '✅ Assinado' : '⏳ Pendente'}) 
+                            e ${c.nomeParte2} 
+                            (${c.assinadoParte2 ? '✅ Assinado' : '⏳ Pendente'})
+                        </p>
+                        
+                        <div style="padding:1rem; background:var(--bg-glass); border-radius:8px; border:1px solid var(--border-color); font-size:0.9rem; white-space:pre-wrap; color:var(--text-secondary); margin-bottom:1rem;">${c.objeto}</div>
+                        
+                        ${c.status === 'rejeitado' && c.motivoRejeicao ? `<p style="font-size:0.85rem; color:var(--accent-red); margin-bottom:1rem;"><strong>Motivo da Rejeição:</strong> ${c.motivoRejeicao}</p>` : ''}
+
+                        ${c.status === 'rascunho' && !euAssinei ? `
+                            <button class="btn btn-success btn-sm" onclick="assinarContrato('${c.id}', ${euSouParte1 ? 1 : 2}, ${outraParteAssinou})">✍️ Assinar Contrato</button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderContratosPublicos() {
+            const list = allContratos.filter(c => c.status === 'aprovado');
+            if (list.length === 0) {
+                document.getElementById('publicosList').innerHTML = '';
+                document.getElementById('publicosEmpty').style.display = 'block';
+                return;
+            }
+            document.getElementById('publicosEmpty').style.display = 'none';
+
+            document.getElementById('publicosList').innerHTML = list.map(c => `
+                <div class="card" style="border-left: 4px solid var(--accent-green);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin:0; font-size:1rem;">${c.titulo}</h3>
+                        <span class="badge badge-green">⚖️ Homologado</span>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0;">Partes: ${c.nomeParte1} e ${c.nomeParte2} · Registrado em ${formatDate(c.dataCriacao)}</p>
+                    <details style="margin-top:0.5rem;">
+                        <summary style="font-size:0.85rem; color:var(--gold); cursor:pointer;">Ler Documento Completo</summary>
+                        <div style="margin-top:0.5rem; padding:1rem; background:var(--bg-glass); border-radius:8px; border:1px solid var(--border-color); font-size:0.85rem; white-space:pre-wrap; color:var(--text-secondary);">${c.objeto}</div>
+                    </details>
+                </div>
+            `).join('');
+        }
+
+        async function submitNovoContrato(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSalvarContrato');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            const data = {
+                titulo: document.getElementById('novoTitulo').value,
+                objeto: document.getElementById('novoObjeto').value,
+                nomeParte1: currentUser.nome,
+                assinadoParte1: true,
+                nomeParte2: document.getElementById('novaParte2').value,
+                assinadoParte2: false,
+                status: 'rascunho'
+            };
+
+            try {
+                await addContrato(data);
+                showToast('Contrato salvo! Aguardando a assinatura da Parte 2.');
+
+                // Clear form
+                document.getElementById('formNovoContrato').reset();
+                document.getElementById('novaParte1').value = currentUser.nome;
+
+                switchTab('meus-contratos');
+                await loadContratos();
+
+            } catch (error) {
+                showToast('Erro: ' + error.message, 'error');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Salvar e Assinar (Enviar Rascunho)';
+        }
+
+        async function assinarContrato(id, numParte, outrapassou) {
+            if (!confirm("Tem certeza que concorda com os termos deste contrato? Sua assinatura marcará o acordo!")) return;
+
+            try {
+                const updateData = {};
+                if (numParte === 1) updateData.assinadoParte1 = true;
+                if (numParte === 2) updateData.assinadoParte2 = true;
+
+                // Se a outra parte já assinou, agora os dois assinaram, manda pra revisão
+                if (outrapassou) {
+                    updateData.status = 'aguardando_revisao';
+                    showToast('Assinado! Enviado para Homologação Administrativa.');
+                } else {
+                    showToast('Contrato assinado. Aguardando a outra parte.');
+                }
+
+                await updateContrato(id, updateData);
+                await loadContratos();
+            } catch (e) {
+                showToast('Erro ao assinar: ' + e.message, 'error');
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>

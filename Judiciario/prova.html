@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Realizar Prova — Sistema Judiciário Narrativo">
+    <title>📝 Provas — Sistema Judiciário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
+            <ul class="navbar-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="prova.html" class="active">Provas</a></li>
+                <li><a href="registro.html">Registro</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- CHECK LOGIN FIRST -->
+        <div id="loginCheck" class="exam-container fade-in" style="display:none;">
+            <div class="card" style="text-align:center;">
+                <div style="font-size:2.5rem; margin-bottom:1rem;">🔑</div>
+                <h2>Login Necessário</h2>
+                <p style="color:var(--text-secondary); margin-bottom:1rem;">Você precisa estar logado para fazer uma
+                    prova.</p>
+                <a href="registro.html" class="btn btn-primary">Fazer Login</a>
+            </div>
+        </div>
+
+        <!-- STEP 1: SELECT EXAM -->
+        <div id="step1" class="exam-container fade-in" style="display:none;">
+            <div class="page-header">
+                <h1>📝 Realizar Prova</h1>
+                <p>Escolha a prova que deseja realizar, <strong id="userName">—</strong>.</p>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label>Prova</label>
+                    <select id="selectProva" class="form-control">
+                        <option value="">Carregando...</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="width:100%; margin-top:0.5rem;" onclick="startExam()">Iniciar
+                    Prova</button>
+            </div>
+
+            <div class="card" style="margin-top:1.5rem;">
+                <div class="card-header">
+                    <div class="card-icon">ℹ️</div>
+                    <h3>Como funciona</h3>
+                </div>
+                <ul style="font-size:0.9rem; color:var(--text-secondary); list-style:none; display:grid; gap:0.5rem;">
+                    <li>1️⃣ Selecione a prova desejada</li>
+                    <li>2️⃣ Responda perguntas fechadas (múltipla escolha) e abertas (texto)</li>
+                    <li>3️⃣ As questões fechadas são corrigidas automaticamente</li>
+                    <li>4️⃣ As questões abertas são analisadas pelos administradores</li>
+                    <li>📌 Após análise, você receberá seu cargo se aprovado</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- STEP 2: QUESTIONS -->
+        <div id="step2" style="display:none;" class="exam-container fade-in">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <h2 id="examTitle">—</h2>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);" id="examInfo">—</p>
+                </div>
+                <span class="badge badge-gold" id="examMinNota">Mínima: 70%</span>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <button class="btn btn-primary" style="width:100%; padding:1rem; font-size:1rem; margin-top:1rem;"
+                onclick="submitExam()">
+                ✅ Enviar Respostas
+            </button>
+        </div>
+
+        <!-- STEP 3: RESULT -->
+        <div id="step3" style="display:none;" class="exam-container fade-in">
+            <div class="card exam-result">
+                <div id="resultEmoji" style="font-size:4rem; margin-bottom:1rem;">⚖️</div>
+                <div class="score" id="resultScore">0%</div>
+                <h2 id="resultStatus">—</h2>
+                <p id="resultMessage" style="color:var(--text-secondary); margin-bottom:1.5rem;">—</p>
+
+                <div class="profile-stats" style="max-width:400px; margin:0 auto 1.5rem;">
+                    <div class="stat-box">
+                        <div class="stat-value" id="resultCorrect">0</div>
+                        <div class="stat-label">Corretas (Fechadas)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="resultTotal">0</div>
+                        <div class="stat-label">Total Fechadas</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="resultOpen">0</div>
+                        <div class="stat-label">Abertas (Revisão)</div>
+                    </div>
+                </div>
+
+                <div id="openNote"
+                    style="display:none; padding:0.8rem; background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2); border-radius:8px; margin-bottom:1.5rem;">
+                    <p style="font-size:0.85rem; color:var(--accent-purple);">📋 Suas respostas abertas serão analisadas
+                        pelos administradores. Aguarde o resultado final!</p>
+                </div>
+
+                <div class="btn-group" style="justify-content:center;">
+                    <button class="btn btn-primary" onclick="resetExam()">Fazer Outra Prova</button>
+                    <a href="perfil.html" class="btn btn-secondary">Ver Perfil</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        let examData = null;
+        let currentUser = null;
+
+        // ========== CHECK LOGIN ==========
+        async function init() {
+            const session = getSession();
+            if (!session || !session.userId || session.isAdmin) {
+                document.getElementById('loginCheck').style.display = 'block';
+                return;
+            }
+
+            try {
+                currentUser = await getUsuario(session.userId);
+                if (!currentUser) {
+                    document.getElementById('loginCheck').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('userName').textContent = currentUser.nome;
+                document.getElementById('step1').style.display = 'block';
+                await loadProvas();
+            } catch (e) {
+                document.getElementById('loginCheck').style.display = 'block';
+            }
+        }
+
+        async function loadProvas() {
+            try {
+                const provas = await getProvas();
+                const provaSelect = document.getElementById('selectProva');
+                const provasAtivas = provas.filter(p => p.ativa);
+                if (provasAtivas.length === 0) {
+                    provaSelect.innerHTML = '<option value="">Nenhuma prova disponível</option>';
+                } else {
+                    provaSelect.innerHTML = '<option value="">Selecione a prova...</option>' +
+                        provasAtivas.map(p => {
+                            const f = (p.perguntas || []).filter(q => q.tipo === 'fechada').length;
+                            const a = (p.perguntas || []).filter(q => q.tipo === 'aberta').length;
+                            return `<option value="${p.id}">${p.titulo} (${f} fechadas, ${a} abertas)</option>`;
+                        }).join('');
+                }
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        // ========== START EXAM ==========
+        async function startExam() {
+            const provaId = document.getElementById('selectProva').value;
+            if (!provaId) { showToast('Selecione uma prova!', 'error'); return; }
+
+            try {
+                examData = await getProva(provaId);
+                if (!examData || !examData.perguntas || examData.perguntas.length === 0) {
+                    showToast('Prova sem perguntas.', 'error');
+                    return;
+                }
+
+                document.getElementById('examTitle').textContent = examData.titulo;
+                const fechadas = examData.perguntas.filter(q => q.tipo === 'fechada').length;
+                const abertas = examData.perguntas.filter(q => q.tipo === 'aberta').length;
+                document.getElementById('examInfo').textContent = `${fechadas} fechadas · ${abertas} abertas · Respondendo como: ${currentUser.nome}`;
+                document.getElementById('examMinNota').textContent = `Mínima: ${examData.notaMinima}%`;
+
+                // Render questions
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = examData.perguntas.map((q, i) => {
+                    if (q.tipo === 'fechada') {
+                        return `
+              <div class="question-card" id="q-${i}" data-tipo="fechada">
+                <div class="question-number">Pergunta ${i + 1} de ${examData.perguntas.length} <span class="badge badge-blue" style="font-size:0.6rem;">Fechada</span></div>
+                <p class="question-text">${q.enunciado}</p>
+                ${q.alternativas.map((alt, j) => `
+                  <label class="option-label" id="opt-${i}-${j}">
+                    <input type="radio" name="q${i}" value="${j}">
+                    <span>${String.fromCharCode(65 + j)}) ${alt}</span>
+                  </label>
+                `).join('')}
+              </div>`;
+                    } else {
+                        return `
+              <div class="question-card" id="q-${i}" data-tipo="aberta" style="border-color:rgba(167,139,250,0.3);">
+                <div class="question-number">Pergunta ${i + 1} de ${examData.perguntas.length} <span class="badge badge-purple" style="font-size:0.6rem;">Aberta</span></div>
+                <p class="question-text">${q.enunciado}</p>
+                <textarea class="form-control resposta-aberta" rows="4" placeholder="Escreva sua resposta aqui..."></textarea>
+              </div>`;
+                    }
+                }).join('');
+
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        // ========== SUBMIT ==========
+        async function submitExam() {
+            if (!examData) return;
+
+            let correctClosed = 0;
+            let totalClosed = 0;
+            let totalOpen = 0;
+            const respostas = [];
+
+            examData.perguntas.forEach((q, i) => {
+                if (q.tipo === 'fechada') {
+                    totalClosed++;
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    const selectedVal = selected ? parseInt(selected.value) : -1;
+
+                    // Highlight
+                    q.alternativas.forEach((_, j) => {
+                        const label = document.getElementById(`opt-${i}-${j}`);
+                        if (j === q.correta) label.classList.add('correct');
+                        else if (j === selectedVal && j !== q.correta) label.classList.add('wrong');
+                    });
+
+                    const isCorrect = selectedVal === q.correta;
+                    if (isCorrect) correctClosed++;
+
+                    respostas.push({
+                        tipo: 'fechada',
+                        pergunta: q.enunciado,
+                        resposta: selectedVal >= 0 ? q.alternativas[selectedVal] : 'Sem resposta',
+                        correta: isCorrect
+                    });
+                } else {
+                    totalOpen++;
+                    const textarea = document.querySelector(`#q-${i} .resposta-aberta`);
+                    respostas.push({
+                        tipo: 'aberta',
+                        pergunta: q.enunciado,
+                        resposta: textarea ? textarea.value : ''
+                    });
+                }
+            });
+
+            // Disable inputs
+            document.querySelectorAll('#questionsContainer input, #questionsContainer textarea').forEach(el => el.disabled = true);
+
+            const nota = totalClosed > 0 ? Math.round((correctClosed / totalClosed) * 100) : 0;
+            const aprovadoFechadas = totalClosed === 0 || nota >= examData.notaMinima;
+            const temAberta = totalOpen > 0;
+
+            // Save
+            try {
+                await salvarResultado({
+                    usuarioId: currentUser.id,
+                    usuarioNome: currentUser.nome,
+                    provaId: examData.id,
+                    provaTitulo: examData.titulo,
+                    nota,
+                    aprovado: aprovadoFechadas,
+                    respostas,
+                    temAberta
+                });
+            } catch (e) { console.error('Erro ao salvar:', e); }
+
+            // Show result
+            document.getElementById('resultScore').textContent = totalClosed > 0 ? `${nota}%` : '—';
+            document.getElementById('resultScore').className = `score ${aprovadoFechadas ? 'pass' : 'fail'}`;
+            document.getElementById('resultEmoji').textContent = aprovadoFechadas ? '📨' : '😞';
+
+            if (temAberta) {
+                document.getElementById('resultStatus').textContent = aprovadoFechadas ? 'Respostas Enviadas!' : 'REPROVADO nas Fechadas';
+                document.getElementById('resultStatus').style.color = aprovadoFechadas ? 'var(--gold)' : 'var(--accent-red)';
+                document.getElementById('resultMessage').textContent = aprovadoFechadas
+                    ? 'Suas respostas abertas serão analisadas pelos administradores.'
+                    : `Você não atingiu a nota mínima de ${examData.notaMinima}% nas questões fechadas.`;
+                document.getElementById('openNote').style.display = aprovadoFechadas ? 'block' : 'none';
+            } else {
+                document.getElementById('resultStatus').textContent = aprovadoFechadas ? 'APROVADO!' : 'REPROVADO';
+                document.getElementById('resultStatus').style.color = aprovadoFechadas ? 'var(--accent-green)' : 'var(--accent-red)';
+                document.getElementById('resultMessage').textContent = aprovadoFechadas
+                    ? 'Parabéns! Você atingiu a nota mínima.'
+                    : `Você não atingiu a nota mínima de ${examData.notaMinima}%.`;
+                document.getElementById('openNote').style.display = 'none';
+            }
+
+            document.getElementById('resultCorrect').textContent = correctClosed;
+            document.getElementById('resultTotal').textContent = totalClosed;
+            document.getElementById('resultOpen').textContent = totalOpen;
+
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+        }
+
+        function resetExam() {
+            examData = null;
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+            loadProvas();
+        }
+
+        // Init
+        init();
+    </script>
+
+</body>
+
+</html>
