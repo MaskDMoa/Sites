@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Painel Administrativo do Sistema Judiciário Narrativo">
     <title>🛡️ Admin — Sistema Judiciário</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         .admin-select-card {
             text-align: center;
@@ -51,25 +51,72 @@
             font-weight: bold;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
-            <ul class="navbar-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-                <li><a href="prova.html">Provas</a></li>
-                <li><a href="artigos.html">Leis</a></li>
-                <li><a href="jurisprudencia.html">Jurisprudência</a></li>
-                <li><a href="contratos.html">Contratos</a></li>
-                <li><a href="registro.html">Registro</a></li>
-                <li><a href="admin.html" class="active">Admin</a></li>
-            </ul>
+    <button class="hamburger"
+        onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced"
+                    style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
         </div>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-house"></i></span>
+                <span class="sidebar-link-text">Início</span>
+            </a>
+            <a href="perfil.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-user"></i></span>
+                <span class="sidebar-link-text">Perfil</span>
+            </a>
+            <a href="prova.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-file-signature"></i></span>
+                <span class="sidebar-link-text">Provas</span>
+            </a>
+            <a href="artigos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-book-journal-whills"></i></span>
+                <span class="sidebar-link-text">Leis</span>
+            </a>
+            <a href="jurisprudencia.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <span class="sidebar-link-text">Jurisprudência</span>
+            </a>
+            <a href="contratos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-handshake"></i></span>
+                <span class="sidebar-link-text">Contratos</span>
+            </a>
+            <a href="intimacoes.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+                <span class="sidebar-link-text">Intimações</span>
+            </a>
+            <a href="criminosos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-hands-bound"></i></span>
+                <span class="sidebar-link-text">Criminosos</span>
+            </a>
+            <a href="registro.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-address-card"></i></span>
+                <span class="sidebar-link-text">Registro</span>
+            </a>
+            <a href="admin.html" class="sidebar-link active">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="sidebar-link-text">Admin</span>
+            </a>
+        </div>
+
     </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">
+            ?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
 
     <!-- PASSWORD GATE -->
     <div id="passwordGate" class="password-gate">
@@ -79,28 +126,29 @@
             <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.9rem;">Selecione seu perfil
                 administrativo e identifique-se.</p>
 
-            <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:1rem; margin-bottom:1.5rem;"
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(80px, 1fr)); gap:1rem; margin-bottom:1.5rem;"
                 id="adminPfpGrid">
                 <div class="admin-select-card active" onclick="selectAdmin('Imperador', this)">
-                    <img src="Imperador.webp" alt="Imperador"
+                    <img src="img/Imperador.webp" alt="Imperador"
                         onerror="this.src=''; this.style.backgroundColor='#4a5568';">
                     <span>Imperador</span>
                 </div>
                 <div class="admin-select-card" onclick="selectAdmin('Julgamento', this)">
-                    <img src="Julgamento.webp" alt="Julgamento"
+                    <img src="img/Julgamento.webp" alt="Julgamento"
                         onerror="this.src=''; this.style.backgroundColor='#4a5568';">
                     <span>Julgamento</span>
                 </div>
                 <div class="admin-select-card" onclick="selectAdmin('Sol', this)">
-                    <img src="Sun.webp" alt="Sol" onerror="this.src=''; this.style.backgroundColor='#4a5568';">
+                    <img src="img/Sun.webp" alt="Sol" onerror="this.src=''; this.style.backgroundColor='#4a5568';">
                     <span>Sol</span>
                 </div>
                 <div class="admin-select-card" onclick="selectAdmin('Eremita', this)">
-                    <img src="Eremita.webp" alt="Eremita" onerror="this.src=''; this.style.backgroundColor='#4a5568';">
+                    <img src="img/Eremita.webp" alt="Eremita"
+                        onerror="this.src=''; this.style.backgroundColor='#4a5568';">
                     <span>Eremita</span>
                 </div>
                 <div class="admin-select-card" onclick="selectAdmin('Porta', this)">
-                    <img src="Porta.webp" alt="Porta" onerror="this.src=''; this.style.backgroundColor='#4a5568';">
+                    <img src="img/Porta.webp" alt="Porta" onerror="this.src=''; this.style.backgroundColor='#4a5568';">
                     <span>Porta</span>
                 </div>
             </div>
@@ -110,6 +158,15 @@
                 onkeydown="if(event.key==='Enter') checkPassword()">
             <button class="btn btn-primary" style="width:100%; margin-top:1rem;" id="btnEnterAdmin"
                 onclick="checkPassword()">Entrar</button>
+            <div style="display:flex; align-items:center; gap:0.75rem; margin:1rem 0 0.5rem;">
+                <hr style="flex:1; border:none; border-top:1px solid var(--border-color);">
+                <span style="color:var(--text-muted); font-size:0.8rem;">ou</span>
+                <hr style="flex:1; border:none; border-top:1px solid var(--border-color);">
+            </div>
+            <button class="btn btn-secondary" style="width:100%;" onclick="adminLoginWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                    style="width:18px; height:18px; vertical-align:middle; margin-right:0.5rem;">Entrar com Google
+            </button>
             <p id="passwordError" class="password-error"
                 style="display:none; color:var(--accent-red); margin-top:0.5rem;"></p>
         </div>
@@ -117,173 +174,230 @@
 
     <!-- ADMIN PANEL -->
     <div id="adminPanel" class="container" style="display:none;">
-        <div class="page-header fade-in">
-            <h1>🛡️ Painel Administrativo</h1>
-            <p>Logado como: <strong id="adminNameDisplay">—</strong></p>
+        <div class="page-header fade-in"
+            style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <h1>🛡️ Painel Administrativo</h1>
+                <p>Logado como: <strong id="adminNameDisplay">—</strong></p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="loadAllData()" title="Atualizar Dados">🔄 Atualizar</button>
+                <button id="btnAdminGoogleSync" class="btn btn-secondary" onclick="syncAdminGoogle()"
+                    style="display:none;">🔗 Sincronizar Google</button>
+                <button class="btn btn-danger" onclick="adminLogout()">Sair</button>
+            </div>
         </div>
 
-        <!-- TABS -->
-        <div class="tabs" id="adminTabs">
-            <button class="tab active" data-tab="solicitacoes" onclick="switchTab('solicitacoes')">📋
-                Solicitações</button>
-            <button class="tab" data-tab="pessoas" onclick="switchTab('pessoas')">👥 Pessoas</button>
-            <button class="tab" data-tab="provas" onclick="switchTab('provas')">📝 Provas</button>
-            <button class="tab" data-tab="resultados" onclick="switchTab('resultados')">📊 Resultados</button>
-            <button class="tab" data-tab="artigos" onclick="switchTab('artigos')">📜 Artigos/Leis</button>
-            <button class="tab" data-tab="jurisprudencia" onclick="switchTab('jurisprudencia')">🏛️ Decisões</button>
-            <button class="tab" data-tab="contratos" onclick="switchTab('contratos')">🤝 Contratos</button>
-        </div>
+        <div class="sidebar-layout">
+            <!-- SIDEBAR NAV -->
+            <div class="sidebar-nav" id="adminTabs">
+                <button class="sidebar-item active" data-tab="solicitacoes" onclick="switchTab('solicitacoes')">📋
+                    Solicitações</button>
+                <button class="sidebar-item" data-tab="pessoas" onclick="switchTab('pessoas')">👥 Pessoas</button>
+                <button class="sidebar-item" data-tab="provas" onclick="switchTab('provas')">📝 Provas</button>
+                <button class="sidebar-item" data-tab="resultados" onclick="switchTab('resultados')">📊
+                    Resultados</button>
+                <button class="sidebar-item" data-tab="artigos" onclick="switchTab('artigos')">📜 Artigos/Leis</button>
+                <button class="sidebar-item" data-tab="jurisprudencia" onclick="switchTab('jurisprudencia')">🏛️
+                    Decisões</button>
+                <button class="sidebar-item" data-tab="contratos" onclick="switchTab('contratos')">🤝 Contratos</button>
+                <button class="sidebar-item" data-tab="intimacoes" onclick="switchTab('intimacoes')">📩
+                    Intimações</button>
+                <button class="sidebar-item" data-tab="criminosos" onclick="switchTab('criminosos')">⛓️
+                    Criminosos</button>
+            </div>
 
-        <!-- TAB: SOLICITAÇÕES -->
-        <div id="tab-solicitacoes" class="tab-content active">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">📋 Solicitações de Registro</h2>
-                <div class="btn-group">
-                    <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('pendente')">⏳
-                        Pendentes</button>
-                    <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('aprovado')">✅
-                        Aprovadas</button>
-                    <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('rejeitado')">❌
-                        Rejeitadas</button>
-                    <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes(null)">Todas</button>
+            <div class="sidebar-content">
+                <!-- TAB: SOLICITAÇÕES -->
+                <div id="tab-solicitacoes" class="tab-content active">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">📋 Solicitações de Registro</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('pendente')">⏳
+                                Pendentes</button>
+                            <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('aprovado')">✅
+                                Aprovadas</button>
+                            <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes('rejeitado')">❌
+                                Rejeitadas</button>
+                            <button class="btn btn-secondary btn-sm" onclick="filterSolicitacoes(null)">Todas</button>
+                        </div>
+                    </div>
+
+                    <div id="solicitacoesLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="solicitacoesList"></div>
+                    <div id="solicitacoesEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">📋</div>
+                        <p>Nenhuma solicitação encontrada.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div id="solicitacoesLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="solicitacoesList"></div>
-            <div id="solicitacoesEmpty" class="empty-state" style="display:none;">
-                <div class="empty-icon">📋</div>
-                <p>Nenhuma solicitação encontrada.</p>
-            </div>
-        </div>
-
-        <!-- TAB: PESSOAS -->
-        <div id="tab-pessoas" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">👥 Pessoas Cadastradas</h2>
-                <button class="btn btn-primary" onclick="openPessoaModal()">+ Cadastrar Pessoa</button>
-            </div>
-            <div class="search-bar">
-                <input type="text" id="searchPessoas" placeholder="Buscar por nome..." oninput="renderPessoas()">
-            </div>
-            <div id="pessoasLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div class="table-wrapper" id="pessoasTable" style="display:none;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Cargo</th>
-                            <th>Nível</th>
-                            <th>Credencial</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pessoasBody"></tbody>
-                </table>
-            </div>
-            <div id="pessoasEmpty" class="empty-state" style="display:none;">
-                <div class="empty-icon">👥</div>
-                <p>Nenhuma pessoa cadastrada.</p>
-            </div>
-        </div>
-
-        <!-- TAB: PROVAS -->
-        <div id="tab-provas" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">📝 Provas</h2>
-                <button class="btn btn-primary" onclick="openProvaModal()">+ Criar Prova</button>
-            </div>
-            <div id="provasLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="provasList" class="grid-2"></div>
-            <div id="provasEmpty" class="empty-state" style="display:none;">
-                <div class="empty-icon">📝</div>
-                <p>Nenhuma prova criada.</p>
-            </div>
-        </div>
-
-        <!-- TAB: RESULTADOS -->
-        <div id="tab-resultados" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">📊 Resultados das Provas</h2>
-                <div class="btn-group">
-                    <button class="btn btn-secondary btn-sm" onclick="filterResultados('pendente')">⏳ Pendentes de
-                        Revisão</button>
-                    <button class="btn btn-secondary btn-sm" onclick="filterResultados(null)">Todos</button>
+                <!-- TAB: PESSOAS -->
+                <div id="tab-pessoas" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">👥 Pessoas Cadastradas</h2>
+                        <button class="btn btn-primary" onclick="openPessoaModal()">+ Cadastrar Pessoa</button>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="searchPessoas" placeholder="Buscar por nome..."
+                            oninput="renderPessoas()">
+                    </div>
+                    <div id="pessoasLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div class="table-wrapper" id="pessoasTable" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Cargo</th>
+                                    <th>Nível</th>
+                                    <th>Credencial</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pessoasBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="pessoasEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">👥</div>
+                        <p>Nenhuma pessoa cadastrada.</p>
+                    </div>
                 </div>
-            </div>
-            <div id="resultadosLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="resultadosList"></div>
-            <div id="resultadosEmpty" class="empty-state" style="display:none;">
-                <div class="empty-icon">📊</div>
-                <p>Nenhum resultado registrado.</p>
-            </div>
-        </div>
 
-        <!-- TAB: ARTIGOS -->
-        <div id="tab-artigos" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">📜 Livro de Artigos</h2>
-                <button class="btn btn-primary" onclick="openArtigoModal()">+ Novo Artigo</button>
-            </div>
-            <div id="artigosLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="artigosAdminList" style="display:grid; gap:1rem;"></div>
-            <div id="artigosEmpty" class="empty-state" style="display:none;">
-                <p>Nenhum artigo encontrado.</p>
-            </div>
-        </div>
-
-        <!-- TAB: JURISPRUDÊNCIA -->
-        <div id="tab-jurisprudencia" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">🏛️ Precedentes e Jurisprudência</h2>
-                <button class="btn btn-primary" onclick="openJurisModal()">+ Publicar Decisão</button>
-            </div>
-            <div id="jurisLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="jurisAdminList" style="display:grid; gap:1rem;"></div>
-            <div id="jurisEmpty" class="empty-state" style="display:none;">
-                <p>Nenhum precedente encontrado.</p>
-            </div>
-        </div>
-
-        <!-- TAB: CONTRATOS -->
-        <div id="tab-contratos" class="tab-content">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h2 class="section-title" style="margin:0;">🤝 Homologar Contratos</h2>
-                <div class="btn-group">
-                    <button class="btn btn-secondary btn-sm" onclick="filterContratosAdmin('aguardando_revisao')">⏳
-                        Pendentes</button>
-                    <button class="btn btn-secondary btn-sm" onclick="filterContratosAdmin(null)">Todos</button>
+                <!-- TAB: PROVAS -->
+                <div id="tab-provas" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">📝 Provas</h2>
+                        <button class="btn btn-primary" onclick="openProvaModal()">+ Criar Prova</button>
+                    </div>
+                    <div id="provasLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="provasList" class="grid-2"></div>
+                    <div id="provasEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">📝</div>
+                        <p>Nenhuma prova criada.</p>
+                    </div>
                 </div>
-            </div>
-            <div id="contratoLoading" class="loading">
-                <div class="spinner"></div> Carregando...
-            </div>
-            <div id="contratosAdminList" style="display:grid; gap:1rem;"></div>
-            <div id="contratosEmpty" class="empty-state" style="display:none;">
-                <p>Nenhum contrato encontrado.</p>
-            </div>
-        </div>
-    </div>
+
+                <!-- TAB: RESULTADOS -->
+                <div id="tab-resultados" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">📊 Resultados das Provas</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-sm" onclick="filterResultados('pendente')">⏳ Pendentes
+                                de
+                                Revisão</button>
+                            <button class="btn btn-secondary btn-sm" onclick="filterResultados(null)">Todos</button>
+                        </div>
+                    </div>
+                    <div id="resultadosLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="resultadosList"></div>
+                    <div id="resultadosEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">📊</div>
+                        <p>Nenhum resultado registrado.</p>
+                    </div>
+                </div>
+
+                <!-- TAB: ARTIGOS -->
+                <div id="tab-artigos" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">📜 Livro de Artigos</h2>
+                        <button class="btn btn-primary" onclick="openArtigoModal()">+ Novo Artigo</button>
+                    </div>
+                    <div id="artigosLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="artigosAdminList" style="display:grid; gap:1rem;"></div>
+                    <div id="artigosEmpty" class="empty-state" style="display:none;">
+                        <p>Nenhum artigo encontrado.</p>
+                    </div>
+                </div>
+
+                <!-- TAB: JURISPRUDÊNCIA -->
+                <div id="tab-jurisprudencia" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">🏛️ Precedentes e Jurisprudência</h2>
+                        <button class="btn btn-primary" onclick="openJurisModal()">+ Publicar Decisão</button>
+                    </div>
+                    <div id="jurisLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="jurisAdminList" style="display:grid; gap:1rem;"></div>
+                    <div id="jurisEmpty" class="empty-state" style="display:none;">
+                        <p>Nenhum precedente encontrado.</p>
+                    </div>
+                </div>
+
+                <!-- TAB: CONTRATOS -->
+                <div id="tab-contratos" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">🤝 Homologar Contratos</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-sm"
+                                onclick="filterContratosAdmin('aguardando_revisao')">⏳
+                                Pendentes</button>
+                            <button class="btn btn-secondary btn-sm" onclick="filterContratosAdmin(null)">Todos</button>
+                        </div>
+                    </div>
+                    <div id="contratoLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="contratosAdminList" style="display:grid; gap:1rem;"></div>
+                    <div id="contratosEmpty" class="empty-state" style="display:none;">
+                        <p>Nenhum contrato encontrado.</p>
+                    </div>
+                </div>
+
+                <!-- TAB: INTIMAÇÕES -->
+                <div id="tab-intimacoes" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">📩 Intimações</h2>
+                    </div>
+                    <div id="intimacoesLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="intimacoesAdminList" style="display:grid; gap:1rem;"></div>
+                    <div id="intimacoesEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">📩</div>
+                        <p>Nenhuma intimação encontrada.</p>
+                    </div>
+                </div>
+
+                <!-- TAB: CRIMINOSOS -->
+                <div id="tab-criminosos" class="tab-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                        <h2 class="section-title" style="margin:0;">⛓️ Criminosos</h2>
+                        <button class="btn btn-primary" onclick="openCriminosoModal()">+ Registrar Criminoso</button>
+                    </div>
+                    <div id="criminososLoading" class="loading">
+                        <div class="spinner"></div> Carregando...
+                    </div>
+                    <div id="criminososAdminList"
+                        style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+                    </div>
+                    <div id="criminososEmpty" class="empty-state" style="display:none;">
+                        <div class="empty-icon">⛓️</div>
+                        <p>Nenhum criminoso registrado.</p>
+                    </div>
+                </div>
+            </div> <!-- End of sidebar-content -->
+        </div> <!-- End of sidebar-layout -->
+    </div> <!-- End of adminPanel container -->
 
     <!-- MODAL: CADASTRAR/EDITAR PESSOA -->
     <div class="modal-overlay" id="pessoaModal">
@@ -406,10 +520,12 @@
             <input type="hidden" id="respostasResultadoId">
             <input type="hidden" id="respostasUsuarioId">
             <div id="respostasActions" style="margin-top:1.5rem; display:none;">
-                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">Após analisar as
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.75rem;">Após analisar
+                    as
                     respostas abertas, aprove para conceder o cargo de Advogado Iniciante:</p>
                 <div class="btn-group">
-                    <button class="btn btn-success" style="flex:1;" onclick="approveExamResult()">✅ Aprovar e Conceder
+                    <button class="btn btn-success" style="flex:1;" onclick="approveExamResult()">✅ Aprovar e
+                        Conceder
                         Cargo</button>
                     <button class="btn btn-danger" onclick="rejectExamResult()">❌ Reprovar</button>
                 </div>
@@ -476,8 +592,9 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase.js"></script>
+    <script src="js/firebase.js"></script>
     <script>
         let allPessoas = [];
         let allProvas = [];
@@ -527,6 +644,85 @@
             btn.textContent = 'Entrar';
         }
 
+        // Admin Google Login
+        async function adminLoginWithGoogle() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                const gUser = result.user;
+
+                // Check all admins for matching googleUid
+                const adminsSnap = await db.collection('admins').get();
+                let foundAdmin = null;
+                adminsSnap.forEach(doc => {
+                    const data = doc.data();
+                    if (data.googleUid === gUser.uid) {
+                        foundAdmin = { id: doc.id, ...data };
+                    }
+                });
+
+                if (foundAdmin) {
+                    currentAdmin = foundAdmin.id;
+                    setSession('admin', true, foundAdmin.id);
+                    document.getElementById('passwordGate').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminNameDisplay').textContent = foundAdmin.id;
+                    showToast(`Admin ${foundAdmin.id} logado via Google!`);
+                    checkAdminGoogleSync(foundAdmin.id);
+                    loadAllData();
+                } else {
+                    showToast('Nenhum admin vinculado a este Google.', 'error');
+                    setTimeout(() => showToast('Faça login com senha primeiro e depois clique em Sincronizar Google.', 'info'), 1500);
+                    firebase.auth().signOut();
+                }
+            } catch (e) {
+                showToast('Erro no Google Login: ' + e.message, 'error');
+            }
+        }
+
+        // Sync current admin with Google
+        async function syncAdminGoogle() {
+            if (!currentAdmin) return;
+            await linkWithGoogle(currentAdmin, true);
+            checkAdminGoogleSync(currentAdmin);
+        }
+
+        // Check if admin has Google linked and show/hide sync button
+        async function checkAdminGoogleSync(adminName) {
+            try {
+                const adminDoc = await db.collection('admins').doc(adminName).get();
+                const btn = document.getElementById('btnAdminGoogleSync');
+                if (btn) {
+                    btn.style.display = (adminDoc.exists && adminDoc.data().googleUid) ? 'none' : 'inline-flex';
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        // Admin logout
+        function adminLogout() {
+            clearSession();
+            firebase.auth().signOut();
+            currentAdmin = '';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('passwordGate').style.display = 'flex';
+            document.getElementById('adminPassword').value = '';
+            showToast('Desconectado.', 'info');
+        }
+
+        // Session restore for admin
+        (function restoreAdminSession() {
+            const s = getSession();
+            if (s && s.isAdmin && s.adminNome) {
+                currentAdmin = s.adminNome;
+                document.getElementById('passwordGate').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('adminNameDisplay').textContent = s.adminNome;
+                checkAdminGoogleSync(s.adminNome);
+                loadAllData();
+            }
+        })();
+
+
         function selectAdmin(nome, el) {
             document.getElementById('adminSelect').value = nome;
             document.querySelectorAll('.admin-select-card').forEach(c => c.classList.remove('active'));
@@ -538,8 +734,10 @@
         // ========== TABS ==========
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            const specificTab = document.querySelector(`[data-tab="${tab}"]`);
+            if (specificTab) { specificTab.classList.add('active'); }
             document.getElementById(`tab-${tab}`).classList.add('active');
         }
 
@@ -547,7 +745,8 @@
         async function loadAllData() {
             await Promise.all([
                 loadSolicitacoes(), loadPessoas(), loadProvas(), loadResultados(),
-                loadArtigosAdmin(), loadJurisAdmin(), loadContratosAdmin()
+                loadArtigosAdmin(), loadJurisAdmin(), loadContratosAdmin(),
+                loadIntimacoes(), loadCriminososAdmin()
             ]);
         }
 
@@ -1103,7 +1302,7 @@
 
         // ========== CONTRATOS ADMIN ==========
         let adminContratosList = [];
-        let contFilterStatus = 'aguardando_revisao';
+        let contFilterStatus = null;
 
         async function loadContratosAdmin() {
             document.getElementById('contratoLoading').style.display = 'flex';
@@ -1143,7 +1342,7 @@
                         <summary style="cursor:pointer; color:var(--gold);">Ler Objeto do Contrato</summary>
                         <p style="margin-top:0.5rem; white-space:pre-wrap;">${c.objeto}</p>
                     </details>
-                    ${c.status === 'aguardando_revisao' ? `
+                    ${c.status !== 'aprovado' && c.status !== 'rejeitado' ? `
                         <div class="btn-group">
                             <button class="btn btn-success btn-sm" onclick="approveContratoAdmin('${c.id}')">✅ Aprovar (Homologar)</button>
                             <button class="btn btn-danger btn-sm" onclick="openRejectContratoModal('${c.id}')">❌ Rejeitar</button>
@@ -1180,6 +1379,131 @@
             } catch (e) { showToast('Erro: ' + e.message, 'error'); }
         }
 
+        // ========== INTIMAÇÕES ADMIN ==========
+        async function loadIntimacoes() {
+            document.getElementById('intimacoesLoading').style.display = 'flex';
+            document.getElementById('intimacoesAdminList').innerHTML = '';
+            document.getElementById('intimacoesEmpty').style.display = 'none';
+            try {
+                const list = await getIntimacoes();
+                if (list.length === 0) { document.getElementById('intimacoesEmpty').style.display = 'block'; }
+                else {
+                    document.getElementById('intimacoesAdminList').innerHTML = list.map(i => `
+                        <div class="card" style="border-left:4px solid var(--gold);">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+                                <div>
+                                    <p style="font-size:0.8rem; color:var(--text-muted);">De: <strong style="color:var(--text-primary);">${i.remetente}</strong> → Para: <strong style="color:var(--text-primary);">${i.alvoNomeLivre}</strong></p>
+                                    <p style="font-size:0.85rem; color:var(--gold); margin-top:0.2rem;">Status: ${i.status}</p>
+                                </div>
+                                <span class="badge badge-gray">${formatDate(i.dataCriacao)}</span>
+                            </div>
+                            <div style="margin-top:0.75rem; padding:0.75rem; background:var(--bg-lighter); border-radius:6px;">
+                                <p style="font-size:0.9rem; color:var(--text-secondary); white-space:pre-wrap;">${i.conteudo}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) { showToast('Erro ao carregar intimações: ' + e.message, 'error'); }
+            document.getElementById('intimacoesLoading').style.display = 'none';
+        }
+
+        // ========== CRIMINOSOS ADMIN ==========
+        let allCriminosos = [];
+
+        async function loadCriminososAdmin() {
+            document.getElementById('criminososLoading').style.display = 'flex';
+            document.getElementById('criminososAdminList').innerHTML = '';
+            document.getElementById('criminososEmpty').style.display = 'none';
+            try {
+                allCriminosos = await getCriminosos();
+                renderCriminososAdmin();
+            } catch (e) { showToast('Erro ao carregar criminosos: ' + e.message, 'error'); }
+            document.getElementById('criminososLoading').style.display = 'none';
+        }
+
+        function renderCriminososAdmin() {
+            if (allCriminosos.length === 0) {
+                document.getElementById('criminososEmpty').style.display = 'block';
+                return;
+            }
+            document.getElementById('criminososEmpty').style.display = 'none';
+            const statusBadge = (s) => {
+                const m = { Procurado: 'badge-red', Capturado: 'badge-green', Condenado: 'badge-gold', Aposentado: 'badge-gray' };
+                return `<span class="badge ${m[s] || 'badge-gray'}">${s}</span>`;
+            };
+            document.getElementById('criminososAdminList').innerHTML = allCriminosos.map(c => `
+                <div class="card" style="border-top:3px solid var(--accent-red);">
+                    <div style="text-align:center; margin-bottom:0.75rem;">
+                        ${c.foto ? `<img src="${c.foto}" onerror="this.style.display='none'" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px dashed var(--accent-red);">` : `<div style="width:80px; height:80px; border-radius:50%; background:#330; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto; border:2px dashed var(--accent-red); color:var(--accent-red);">⛓️</div>`}
+                    </div>
+                    <h3 style="text-align:center; margin-bottom:0.3rem;">${c.nome}</h3>
+                    <div style="text-align:center; margin-bottom:0.75rem;">${statusBadge(c.status)}</div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.5rem;"><strong>Crimes:</strong> ${c.crimes}</p>
+                    <p style="font-size:0.9rem; color:var(--accent-red); font-weight:bold; text-align:center;">¥ ${c.recompensa?.toLocaleString() || '0'}</p>
+                    <div class="btn-group" style="margin-top:0.75rem; justify-content:center;">
+                        <button class="btn btn-secondary btn-sm" onclick="editCriminosoAdmin('${c.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCriminosoAdmin('${c.id}', '${c.nome}')">🗑 Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openCriminosoModal(id = null) {
+            document.getElementById('crimId').value = id || '';
+            if (!id) {
+                document.getElementById('crimNome').value = '';
+                document.getElementById('crimCrimes').value = '';
+                document.getElementById('crimRecompensa').value = '0';
+                document.getElementById('crimFoto').value = '';
+                document.getElementById('crimStatus').value = 'Procurado';
+            }
+            openModal('criminosoModal');
+        }
+
+        function editCriminosoAdmin(id) {
+            const c = allCriminosos.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('crimId').value = id;
+            document.getElementById('crimNome').value = c.nome;
+            document.getElementById('crimCrimes').value = c.crimes;
+            document.getElementById('crimRecompensa').value = c.recompensa || 0;
+            document.getElementById('crimFoto').value = c.foto || '';
+            document.getElementById('crimStatus').value = c.status || 'Procurado';
+            openModal('criminosoModal');
+        }
+
+        async function saveCriminosoForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('crimId').value;
+            const data = {
+                nome: document.getElementById('crimNome').value,
+                crimes: document.getElementById('crimCrimes').value,
+                recompensa: parseInt(document.getElementById('crimRecompensa').value) || 0,
+                foto: document.getElementById('crimFoto').value,
+                status: document.getElementById('crimStatus').value
+            };
+            try {
+                if (id) {
+                    await updateCriminoso(id, data);
+                    showToast('Criminoso atualizado!');
+                } else {
+                    await addCriminoso(data);
+                    showToast('Criminoso registrado!');
+                }
+                closeModal('criminosoModal');
+                await loadCriminososAdmin();
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
+        async function deleteCriminosoAdmin(id, nome) {
+            if (!confirm(`Excluir o criminoso "${nome}"?`)) return;
+            try {
+                await deleteCriminoso(id);
+                showToast('Excluído com sucesso.');
+                await loadCriminososAdmin();
+            } catch (e) { showToast('Erro: ' + e.message, 'error'); }
+        }
+
         // ========== MODALS ==========
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -1188,6 +1512,35 @@
         });
     </script>
 
+    <!-- MODAL: CRIMINOSO -->
+    <div class="modal-overlay" id="criminosoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Dados do Indivíduo</h2>
+                <button class="modal-close" onclick="closeModal('criminosoModal')">&times;</button>
+            </div>
+            <form id="formCriminoso" onsubmit="saveCriminosoForm(event)">
+                <input type="hidden" id="crimId">
+                <div class="form-group"><label>Nome</label><input type="text" id="crimNome" class="form-control"
+                        required></div>
+                <div class="form-group"><label>Crimes Cometidos (Lista)</label><textarea id="crimCrimes"
+                        class="form-control" rows="3" required></textarea></div>
+                <div class="form-group"><label>Recompensa (¥)</label><input type="number" id="crimRecompensa"
+                        class="form-control" value="0"></div>
+                <div class="form-group"><label>URL da Foto/Cartaz</label><input type="text" id="crimFoto"
+                        class="form-control"></div>
+                <div class="form-group"><label>Status Atual</label>
+                    <select id="crimStatus" class="form-control">
+                        <option value="Procurado">Procurado</option>
+                        <option value="Capturado">Capturado</option>
+                        <option value="Condenado">Condenado</option>
+                        <option value="Aposentado">Aposentado</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Salvar Registro</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

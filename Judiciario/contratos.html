@@ -5,25 +5,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📜 Contratos — Sistema Judiciário</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
-            <ul class="navbar-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-                <li><a href="prova.html">Provas</a></li>
-                <li><a href="artigos.html">Leis</a></li>
-                <li><a href="jurisprudencia.html">Jurisprudência</a></li>
-                <li><a href="contratos.html" class="active">Contratos</a></li>
-                <li><a href="registro.html">Registro</a></li>
-                <li><a href="admin.html">Admin</a></li>
-            </ul>
+        <button class="hamburger" onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced" style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
         </div>
-    </nav>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-house"></i></span>
+                <span class="sidebar-link-text">Início</span>
+            </a>
+            <a href="perfil.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-user"></i></span>
+                <span class="sidebar-link-text">Perfil</span>
+            </a>
+            <a href="prova.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-file-signature"></i></span>
+                <span class="sidebar-link-text">Provas</span>
+            </a>
+            <a href="artigos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-book-journal-whills"></i></span>
+                <span class="sidebar-link-text">Leis</span>
+            </a>
+            <a href="jurisprudencia.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <span class="sidebar-link-text">Jurisprudência</span>
+            </a>
+            <a href="contratos.html" class="sidebar-link active">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-handshake"></i></span>
+                <span class="sidebar-link-text">Contratos</span>
+            </a>
+            <a href="intimacoes.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+                <span class="sidebar-link-text">Intimações</span>
+            </a>
+            <a href="criminosos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-hands-bound"></i></span>
+                <span class="sidebar-link-text">Criminosos</span>
+            </a>
+            <a href="registro.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-address-card"></i></span>
+                <span class="sidebar-link-text">Registro</span>
+            </a>
+            <a href="admin.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="sidebar-link-text">Admin</span>
+            </a>
+        </div>
+
+            </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
 
     <!-- NOT LOGGED IN MESSAGE -->
     <div id="loginWarning" class="container fade-in" style="display:none; text-align:center; padding:3rem 0;">
@@ -84,9 +128,7 @@
                         </div>
                         <div class="form-group" style="margin:0;">
                             <label>Outra Parte Envolvida (Parte 2)</label>
-                            <select id="novaParte2" class="form-control" required>
-                                <option value="">Carregando usuários...</option>
-                            </select>
+                            <input type="text" id="novaParte2" class="form-control" placeholder="Digite o nome da outra parte livremente..." required>
                         </div>
                     </div>
 
@@ -125,8 +167,9 @@
     <div class="toast-container"></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase.js"></script>
+    <script src="js/firebase.js"></script>
     <script>
         let currentUser = null;
         let allContratos = [];
@@ -160,7 +203,7 @@
 
             // Load data
             await Promise.all([
-                loadUsuariosForSelect(),
+                
                 loadContratos()
             ]);
         }
@@ -339,3 +382,8 @@
 </body>
 
 </html>
+
+
+
+
+

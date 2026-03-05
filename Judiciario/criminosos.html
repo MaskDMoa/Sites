@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📜 Livro de Artigos — Sistema Judiciário</title>
+    <title>⛓️ Criminosos Procurados — Sistema Judiciário</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -29,7 +29,7 @@
                 <span class="sidebar-link-icon"><i class="fa-solid fa-file-signature"></i></span>
                 <span class="sidebar-link-text">Provas</span>
             </a>
-            <a href="artigos.html" class="sidebar-link active">
+            <a href="artigos.html" class="sidebar-link">
                 <span class="sidebar-link-icon"><i class="fa-solid fa-book-journal-whills"></i></span>
                 <span class="sidebar-link-text">Leis</span>
             </a>
@@ -45,7 +45,7 @@
                 <span class="sidebar-link-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
                 <span class="sidebar-link-text">Intimações</span>
             </a>
-            <a href="criminosos.html" class="sidebar-link">
+            <a href="criminosos.html" class="sidebar-link active">
                 <span class="sidebar-link-icon"><i class="fa-solid fa-hands-bound"></i></span>
                 <span class="sidebar-link-text">Criminosos</span>
             </a>
@@ -71,19 +71,21 @@
 
     <div class="container fade-in">
         <div class="page-header">
-            <h1>📜 Livro de Artigos (Regras Oficiais)</h1>
-            <p>Consulte as normas institucionais, hierarquia de advocacia e diretrizes do RPG.</p>
+            <h1 style="color:var(--accent-red);">⛓️ Criminosos e Procurados</h1>
+            <p>Lista oficial de criminosos procurados e condenados no Sistema Judiciário Narrativo.</p>
         </div>
 
         <div id="loading" class="loading">
-            <div class="spinner"></div> Carregando...
+            <div class="spinner"></div> Carregando sistema de procurados...
         </div>
 
-        <div id="artigosList" style="display:none; display:grid; gap:1.5rem;"></div>
+        <div id="criminososList"
+            style="display:none; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem;">
+        </div>
 
         <div id="emptyState" class="empty-state" style="display:none;">
-            <div class="empty-icon">📜</div>
-            <p>O Livro de Artigos ainda não foi preenchido.</p>
+            <div class="empty-icon">🕊️</div>
+            <p>A paz reina temporariamente. Nenhum procurado listado.</p>
         </div>
     </div>
 
@@ -95,9 +97,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="js/firebase.js"></script>
     <script>
-        async function loadArtigos() {
+        async function loadCriminosos() {
             try {
-                const list = await getArtigos();
+                // We'll read from criminosos collection
+                const snapshot = await db.collection('criminosos').orderBy('recompensa', 'desc').get();
+                const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
                 document.getElementById('loading').style.display = 'none';
 
                 if (list.length === 0) {
@@ -105,30 +110,40 @@
                     return;
                 }
 
-                const container = document.getElementById('artigosList');
+                const container = document.getElementById('criminososList');
                 container.style.display = 'grid';
-                container.innerHTML = list.map(a => `
-                    <div class="card" style="border-left: 4px solid var(--gold); padding: 1.5rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
-                            <h2 style="color:var(--text-primary); font-size:1.3rem; margin:0;">${a.titulo}</h2>
-                            <span class="badge badge-gold" style="font-size:0.8rem;">${a.categoria}</span>
+                container.innerHTML = list.map(c => `
+                    <div class="card" style="border-top: 5px solid var(--accent-red); position:relative; overflow:hidden;">
+                        ${c.status === 'Capturado' ? '<div style="position:absolute; top:20px; right:-30px; background:var(--green); color:black; transform:rotate(45deg); padding:5px 40px; font-weight:bold; font-size:0.8rem; letter-spacing:1px; z-index:2;">CAPTURADO</div>' : ''}
+                        ${c.status === 'Condenado' ? '<div style="position:absolute; top:20px; right:-30px; background:var(--gold); color:black; transform:rotate(45deg); padding:5px 40px; font-weight:bold; font-size:0.8rem; letter-spacing:1px; z-index:2;">CONDENADO</div>' : ''}
+                        
+                        <div style="text-align:center; margin-bottom:1rem;">
+                            <img src="${c.foto || ''}" onerror="this.src=''; this.style.display='none';" style="${c.foto ? 'width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px dashed var(--accent-red);' : 'display:none;'}">
+                            <div style="${c.foto ? 'display:none;' : 'width:120px; height:120px; border-radius:50%; background:#330; display:flex; align-items:center; justify-content:center; font-size:3rem; margin:0 auto; border:2px dashed var(--accent-red); color:var(--accent-red);'}">⛓️</div>
                         </div>
-                        <div style="white-space:pre-wrap; color:var(--text-secondary); line-height:1.7; font-size:0.95rem;">${a.texto}</div>
+                        <h3 style="text-align:center; color:var(--text-primary); margin-bottom:0.5rem; font-size:1.4rem;">${c.nome}</h3>
+                        <div style="background:var(--bg-lighter); padding:0.8rem; border-radius:6px; margin-bottom:1rem;">
+                            <strong style="color:var(--gold); font-size:0.9rem;">Crimes:</strong>
+                            <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:0.3rem;">${c.crimes}</p>
+                        </div>
+                        <div style="background:rgba(255, 68, 68, 0.1); padding:0.8rem; border-radius:6px; border:1px solid rgba(255,68,68,0.2); text-align:center;">
+                            <span style="color:var(--text-primary); font-size:0.85rem;">RECOMPENSA</span><br>
+                            <strong style="color:var(--accent-red); font-size:1.3rem;">¥ ${c.recompensa?.toLocaleString() || '0'}</strong>
+                        </div>
                     </div>
                 `).join('');
             } catch (error) {
                 console.error(error);
-                showToast('Falha de conexão. Verifique as regras do Firebase.', 'error');
+                showToast('Falha de conexão ao carregar procurados.', 'error');
                 document.getElementById('loading').style.display = 'none';
             }
         }
 
-        window.onload = loadArtigos;
+        window.onload = loadCriminosos;
     </script>
 </body>
 
 </html>
-
 
 
 

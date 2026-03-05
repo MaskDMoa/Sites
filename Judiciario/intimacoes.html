@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📩 Intimações — Sistema Judiciário</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+        <button class="hamburger" onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced" style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-house"></i></span>
+                <span class="sidebar-link-text">Início</span>
+            </a>
+            <a href="perfil.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-user"></i></span>
+                <span class="sidebar-link-text">Perfil</span>
+            </a>
+            <a href="prova.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-file-signature"></i></span>
+                <span class="sidebar-link-text">Provas</span>
+            </a>
+            <a href="artigos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-book-journal-whills"></i></span>
+                <span class="sidebar-link-text">Leis</span>
+            </a>
+            <a href="jurisprudencia.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <span class="sidebar-link-text">Jurisprudência</span>
+            </a>
+            <a href="contratos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-handshake"></i></span>
+                <span class="sidebar-link-text">Contratos</span>
+            </a>
+            <a href="intimacoes.html" class="sidebar-link active">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+                <span class="sidebar-link-text">Intimações</span>
+            </a>
+            <a href="criminosos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-hands-bound"></i></span>
+                <span class="sidebar-link-text">Criminosos</span>
+            </a>
+            <a href="registro.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-address-card"></i></span>
+                <span class="sidebar-link-text">Registro</span>
+            </a>
+            <a href="admin.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="sidebar-link-text">Admin</span>
+            </a>
+        </div>
+
+            </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
+
+    <div class="container fade-in">
+        <div class="page-header">
+            <h1>📩 Portal de Intimações</h1>
+            <p>Envie intimações oficiais digitando o nome do alvo e o motivo do mandado.</p>
+        </div>
+
+        <div id="loginWarning" class="card" style="display:none; text-align:center;">
+            <h3>Restrito a Usuários Logados</h3>
+            <p>Você precisa estar logado com seu perfil de advogado ou juiz para enviar intimações.</p>
+            <p>Os administradores não enviam intimações diretamente pelo painel administrativo nesta tela.</p>
+            <a href="perfil.html" class="btn btn-primary" style="margin-top:1rem;">Ir para Perfil</a>
+        </div>
+
+        <div id="intimacaoPanel" style="display:none;">
+            <div class="tabs">
+                <button class="tab active" data-tab="enviar" onclick="switchTab('enviar')">Nova Intimação</button>
+                <button class="tab" data-tab="historico" onclick="switchTab('historico')">Minhas / Recebidas</button>
+            </div>
+
+            <div id="tab-enviar" class="tab-content active">
+                <div class="card" style="max-width:800px; margin:0 auto;">
+                    <form id="formNovaIntimacao" onsubmit="enviarIntimacao(event)">
+                        <div class="form-group">
+                            <label>Alvo da Intimação (Nome Livre)</label>
+                            <input type="text" id="alvoNome" class="form-control" placeholder="Ex: Bob, o Construtor"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Conteúdo / Motivo Judicial</label>
+                            <textarea id="conteudoTexto" class="form-control" rows="5"
+                                placeholder="Descreva o motivo da intimação..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;" id="btnSalvar">Expedir
+                            Intimação</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="tab-historico" class="tab-content">
+                <div id="loadingH" class="loading">
+                    <div class="spinner"></div> Carregando Histórico...
+                </div>
+                <div id="histList" style="display:grid; gap:1.5rem; display:none;"></div>
+                <div id="emptyH" class="empty-state" style="display:none;">
+                    <div class="empty-icon">📂</div>
+                    <p>Nenhuma intimação enviada ou recebida.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script>
+        let currentUser = null;
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            if (tab === 'historico') {
+                loadHistorico();
+            }
+        }
+
+        async function init() {
+            const session = getSession();
+            if (!session || !session.userId || session.isAdmin) {
+                document.getElementById('loginWarning').style.display = 'block';
+                return;
+            }
+
+            currentUser = await getUsuario(session.userId);
+            if (!currentUser) {
+                document.getElementById('loginWarning').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('intimacaoPanel').style.display = 'block';
+        }
+
+        async function enviarIntimacao(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSalvar');
+            const alvo = document.getElementById('alvoNome').value.trim();
+            const cont = document.getElementById('conteudoTexto').value.trim();
+
+            if (!alvo || !cont) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Expedindo...';
+
+            try {
+                await addIntimacao(currentUser.nome, alvo, cont);
+                showToast('Intimação expedida com sucesso!');
+                e.target.reset();
+                switchTab('historico');
+            } catch (err) {
+                showToast('Erro: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Expedir Intimação';
+            }
+        }
+
+        async function loadHistorico() {
+            document.getElementById('loadingH').style.display = 'block';
+            document.getElementById('histList').style.display = 'none';
+            document.getElementById('emptyH').style.display = 'none';
+
+            try {
+                const intimacoes = await getIntimacoes(currentUser.nome);
+                document.getElementById('loadingH').style.display = 'none';
+                if (intimacoes.length === 0) {
+                    document.getElementById('emptyH').style.display = 'block';
+                } else {
+                    const listEl = document.getElementById('histList');
+                    listEl.style.display = 'grid';
+                    listEl.innerHTML = intimacoes.map(i => {
+                        const ehMinha = i.remetente === currentUser.nome;
+                        const bgColor = ehMinha ? 'var(--bg-lighter)' : 'rgba(255, 68, 68, 0.1)';
+                        const titleTag = ehMinha
+                            ? `<strong style="color:var(--text-secondary);">Enviado para:</strong> <span style="color:var(--gold);">${i.alvoNomeLivre}</span>`
+                            : `<strong style="color:var(--accent-red);">RECEBIDA DE:</strong> <span style="color:var(--gold);">${i.remetente}</span>`;
+
+                        return `
+                        <div class="card" style="background:${bgColor}; border-left:4px solid ${ehMinha ? 'var(--gold)' : 'var(--accent-red)'}">
+                            <p style="margin-bottom:0.5rem; font-size:1.1rem;">${titleTag}</p>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Expedida em ${formatDate(i.dataCriacao)}</p>
+                            <div style="background:var(--bg-glass); padding:1rem; border-radius:8px; white-space:pre-wrap; border: 1px dashed ${ehMinha ? 'var(--gold)' : 'var(--accent-red)'};">${i.conteudo}</div>
+                        </div>`;
+                    }).join('');
+                }
+            } catch (err) {
+                document.getElementById('loadingH').style.display = 'none';
+                showToast('Falha ao carregar', 'error');
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
+
+
+

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Buscar Perfis — Sistema Judiciário</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            border: 2px solid var(--border-color);
+            background: rgba(18, 18, 30, 0.6);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+
+        .perfil-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .perfil-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid var(--gold);
+        }
+
+        .perfil-card:hover {
+            transform: translateY(-5px);
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1), 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .perfil-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            background: #330000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="hamburger"
+        onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced"
+                    style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-house"></i></span><span class="sidebar-link-text">Início</span></a>
+            <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-user"></i></span><span class="sidebar-link-text">Perfil</span></a>
+            <a href="buscar_perfil.html" class="sidebar-link active"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-magnifying-glass"></i></span><span class="sidebar-link-text">Buscar
+                    Perfil</span></a>
+            <a href="prova.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-file-signature"></i></span><span class="sidebar-link-text">Provas</span></a>
+            <a href="artigos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-book-journal-whills"></i></span><span
+                    class="sidebar-link-text">Leis</span></a>
+            <a href="jurisprudencia.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-building-columns"></i></span><span
+                    class="sidebar-link-text">Jurisprudência</span></a>
+            <a href="contratos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-handshake"></i></span><span class="sidebar-link-text">Contratos</span></a>
+            <a href="intimacoes.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-envelope-open-text"></i></span><span
+                    class="sidebar-link-text">Intimações</span></a>
+            <a href="criminosos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-hands-bound"></i></span><span class="sidebar-link-text">Criminosos</span></a>
+            <a href="registro.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-address-card"></i></span><span class="sidebar-link-text">Registro</span></a>
+            <a href="admin.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-shield-halved"></i></span><span class="sidebar-link-text">Admin</span></a>
+        </div>
+            </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
+
+    <div class="container fade-in">
+        <div class="page-header">
+            <h1><i class="fa-solid fa-users" style="margin-right:10px;"></i> Buscar Cidadãos</h1>
+            <p>Encontre perfis públicos de advogados, juízes e candidatos no Sistema Judiciário.</p>
+        </div>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Digite o nome do cidadão..."
+                oninput="filterProfiles()">
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div> Buscando arquivos...
+        </div>
+        <div id="profilesList" class="perfil-grid" style="display:none;"></div>
+
+        <div id="emptyState" class="empty-state" style="display:none; text-align:center; padding: 3rem;">
+            <i class="fa-solid fa-user-slash" style="font-size:4rem; color:var(--text-muted); margin-bottom:1rem;"></i>
+            <p>Nenhum cidadão encontrado com este nome.</p>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script>
+        let allUsers = [];
+
+        async function loadProfiles() {
+            try {
+                // Get all active users
+                allUsers = await getUsuarios();
+                allUsers = allUsers.filter(u => u.status === 'ativo');
+
+                document.getElementById('loading').style.display = 'none';
+                renderProfiles(allUsers);
+            } catch (e) {
+                console.error(e);
+                showToast('Falha de conexão', 'error');
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function filterProfiles() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = allUsers.filter(u => u.nome.toLowerCase().includes(query) || (u.cargo && u.cargo.toLowerCase().includes(query)));
+            renderProfiles(filtered);
+        }
+
+        function renderProfiles(list) {
+            const container = document.getElementById('profilesList');
+            const empty = document.getElementById('emptyState');
+
+            if (list.length === 0) {
+                container.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            empty.style.display = 'none';
+
+            container.innerHTML = list.map(u => `
+                <div class="card perfil-card" onclick="window.location.href='ver_perfil.html?id=${u.id}'">
+                    ${u.urlCarteirinha
+                    ? `<img src="${u.urlCarteirinha}" class="perfil-avatar" onerror="this.outerHTML='<div class=\\'perfil-avatar\\'>${u.nome.charAt(0).toUpperCase()}</div>'">`
+                    : `<div class="perfil-avatar">${u.nome.charAt(0).toUpperCase()}</div>`
+                }
+                    <div>
+                        <h3 style="color:var(--text-primary); margin-bottom:0.2rem; font-size:1.1rem;">${u.nome}</h3>
+                        <p style="color:var(--gold); font-size:0.85rem; font-weight:bold;">${u.cargo || 'Candidato'}</p>
+                        ${u.nivelBadge ? `<span class="badge" style="background:var(--bg-lighter); font-size:0.7rem; margin-top:5px; display:inline-block;">Nível: ${u.nivelBadge}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.onload = loadProfiles;
+    </script>
+</body>
+
+</html>
+

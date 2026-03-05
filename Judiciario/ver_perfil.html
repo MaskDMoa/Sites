@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👤 Ver Perfil — Sistema Judiciário</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <button class="hamburger"
+        onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced"
+                    style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
+        </div>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-house"></i></span><span class="sidebar-link-text">Início</span></a>
+            <a href="perfil.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-user"></i></span><span class="sidebar-link-text">Perfil</span></a>
+            <a href="buscar_perfil.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-magnifying-glass"></i></span><span class="sidebar-link-text">Buscar
+                    Perfil</span></a>
+            <a href="prova.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-file-signature"></i></span><span class="sidebar-link-text">Provas</span></a>
+            <a href="artigos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-book-journal-whills"></i></span><span
+                    class="sidebar-link-text">Leis</span></a>
+            <a href="jurisprudencia.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-building-columns"></i></span><span
+                    class="sidebar-link-text">Jurisprudência</span></a>
+            <a href="contratos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-handshake"></i></span><span class="sidebar-link-text">Contratos</span></a>
+            <a href="intimacoes.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-envelope-open-text"></i></span><span
+                    class="sidebar-link-text">Intimações</span></a>
+            <a href="criminosos.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-hands-bound"></i></span><span class="sidebar-link-text">Criminosos</span></a>
+            <a href="registro.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-address-card"></i></span><span class="sidebar-link-text">Registro</span></a>
+            <a href="admin.html" class="sidebar-link"><span class="sidebar-link-icon"><i
+                        class="fa-solid fa-shield-halved"></i></span><span class="sidebar-link-text">Admin</span></a>
+        </div>
+            </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
+
+    <div class="container fade-in">
+        <button class="btn btn-secondary" style="margin-bottom: 2rem;" onclick="window.history.back()">
+            <i class="fa-solid fa-arrow-left"></i> Voltar à Busca
+        </button>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div> Recuperando autos...
+        </div>
+
+        <div id="profileContent" style="display:none;">
+            <div class="card"
+                style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1rem; position: relative;">
+                <div id="statusBadge" style="position: absolute; top: 1rem; right: 1rem;"></div>
+
+                <div id="avatarContainer"
+                    style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--gold); overflow: hidden; background: #330000; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--gold); box-shadow: 0 0 20px rgba(212,175,55,0.3);">
+                </div>
+
+                <h1 id="pNome" style="margin-top: 1rem; font-size: 2.2rem; margin-bottom: 0;">Nome do Alvo</h1>
+                <p id="pCargo" style="font-size: 1.2rem; color: var(--gold); font-weight: bold; margin-bottom: 0;">Cargo
+                </p>
+                <div id="pNivel" style="margin-bottom: 1rem;"></div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-scale-balanced" style="margin-right: 10px;"></i>
+                    Estatísticas Judiciais</h2>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; text-align: center;">
+                    <div style="background: var(--bg-lighter); padding: 1rem; border-radius: 8px;">
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Processos Ganhos</span>
+                        <h3 id="pGanhos" style="font-size: 2rem; color: var(--green);">0</h3>
+                    </div>
+                    <div style="background: var(--bg-lighter); padding: 1rem; border-radius: 8px;">
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Processos Perdidos</span>
+                        <h3 id="pPerdidos" style="font-size: 2rem; color: var(--accent-red);">0</h3>
+                    </div>
+                    <div style="background: var(--bg-lighter); padding: 1rem; border-radius: 8px;">
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">Status Legal</span>
+                        <h3 id="pSit" style="font-size: 1.5rem; color: var(--text-primary); margin-top: 5px;">Ativo</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="criminalWarning" class="card"
+                style="display:none; margin-top: 2rem; border-left: 5px solid var(--accent-red); background: rgba(255, 68, 68, 0.1);">
+                <h2 style="color: var(--accent-red); margin-bottom: 0.5rem;"><i
+                        class="fa-solid fa-triangle-exclamation"></i> ALERTA CRIMINAL</h2>
+                <p>Este indivíduo possui registros criminais reportados pelo Tribunal de Justiça.</p>
+                <button class="btn btn-danger" style="margin-top: 1rem;"
+                    onclick="window.location.href='criminosos.html'">Acessar Ficha Criminal</button>
+            </div>
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display:none;">
+            <i class="fa-solid fa-user-xmark"
+                style="font-size: 4rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <p>Perfil não encontrado no sistema do judiciário.</p>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase.js"></script>
+    <script>
+        async function loadPublicProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetId = urlParams.get('id');
+
+            if (!targetId) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            try {
+                const user = await getUsuario(targetId);
+                document.getElementById('loading').style.display = 'none';
+
+                if (!user) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('profileContent').style.display = 'block';
+                document.getElementById('pNome').textContent = user.nome || 'Sem Nome';
+                document.getElementById('pCargo').textContent = user.cargo || 'Candidato';
+                document.getElementById('pGanhos').textContent = user.ganhos || '0';
+                document.getElementById('pPerdidos').textContent = user.perdidos || '0';
+
+                if (user.nivelBadge) {
+                    document.getElementById('pNivel').innerHTML = `<span class="badge" style="font-size:0.9rem; padding:0.4rem 0.8rem;">${user.nivelBadge}</span>`;
+                }
+
+                const avCont = document.getElementById('avatarContainer');
+                if (user.urlCarteirinha) {
+                    avCont.innerHTML = `<img src="${user.urlCarteirinha}" style="width:100%; height:100%; object-fit:cover;" onerror="this.outerHTML='<i class=\\'fa-solid fa-user\\'></i>'">`;
+                } else {
+                    avCont.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                }
+
+                // Check criminal status
+                const crimSnapshot = await db.collection('criminosos').where('nome', '==', user.nome).get();
+                if (!crimSnapshot.empty) {
+                    document.getElementById('pSit').textContent = 'Fichado (Protetores)';
+                    document.getElementById('pSit').style.color = 'var(--accent-red)';
+                    document.getElementById('criminalWarning').style.display = 'block';
+                }
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                showToast('Falha de sistema.', 'error');
+            }
+        }
+
+        window.onload = loadPublicProfile;
+    </script>
+</body>
+
+</html>
+

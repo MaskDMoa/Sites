@@ -6,23 +6,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Registro — Quero ser Advogado no Sistema Judiciário Narrativo">
     <title>📋 Registro — Sistema Judiciário</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <a href="index.html" class="navbar-brand"><span>⚖️</span> Sistema Judiciário</a>
-            <ul class="navbar-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="perfil.html">Perfil</a></li>
-                <li><a href="prova.html">Provas</a></li>
-                <li><a href="registro.html" class="active">Registro</a></li>
-                <li><a href="admin.html">Admin</a></li>
-            </ul>
+    <button class="hamburger"
+        onclick="document.querySelector('.global-sidebar').classList.toggle('mobile-open')">☰</button>
+    <nav class="global-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-brand-icon"><i class="fa-solid fa-scale-balanced"
+                    style="text-shadow:0 0 10px var(--gold);"></i></span>
+            <span class="sidebar-brand-text">Judiciário</span>
         </div>
+        <div class="sidebar-links">
+            <a href="index.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-house"></i></span>
+                <span class="sidebar-link-text">Início</span>
+            </a>
+            <a href="perfil.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-user"></i></span>
+                <span class="sidebar-link-text">Perfil</span>
+            </a>
+            <a href="prova.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-file-signature"></i></span>
+                <span class="sidebar-link-text">Provas</span>
+            </a>
+            <a href="artigos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-book-journal-whills"></i></span>
+                <span class="sidebar-link-text">Leis</span>
+            </a>
+            <a href="jurisprudencia.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <span class="sidebar-link-text">Jurisprudência</span>
+            </a>
+            <a href="contratos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-handshake"></i></span>
+                <span class="sidebar-link-text">Contratos</span>
+            </a>
+            <a href="intimacoes.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+                <span class="sidebar-link-text">Intimações</span>
+            </a>
+            <a href="criminosos.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-hands-bound"></i></span>
+                <span class="sidebar-link-text">Criminosos</span>
+            </a>
+            <a href="registro.html" class="sidebar-link active">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-address-card"></i></span>
+                <span class="sidebar-link-text">Registro</span>
+            </a>
+            <a href="admin.html" class="sidebar-link">
+                <span class="sidebar-link-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="sidebar-link-text">Admin</span>
+            </a>
+        </div>
+
     </nav>
+
+    <a href="perfil.html" id="topRightUser" class="top-right-user" title="Ir ao Perfil">
+        <img id="sidebarAvatar" class="top-right-avatar" style="display:none;"
+            onerror="this.src=''; this.style.display='none'; document.getElementById('sidebarAvatarPlaceholder').style.display='flex';">
+        <div id="sidebarAvatarPlaceholder" class="top-right-avatar"
+            style="display:flex;align-items:center;justify-content:center;font-size:1rem;background:#330000;color:var(--gold);">
+            ?</div>
+        <span id="sidebarUserName" class="top-right-name">Visitante</span>
+    </a>
 
     <div class="container">
         <div class="exam-container">
@@ -138,6 +188,16 @@
                             onkeydown="if(event.key==='Enter') doLogin()">
                     </div>
                     <button class="btn btn-primary" style="width:100%;" onclick="doLogin()">Entrar</button>
+                    <div style="display:flex; align-items:center; gap:0.75rem; margin:1rem 0 0.5rem;">
+                        <hr style="flex:1; border:none; border-top:1px solid var(--border-color);">
+                        <span style="color:var(--text-muted); font-size:0.8rem;">ou</span>
+                        <hr style="flex:1; border:none; border-top:1px solid var(--border-color);">
+                    </div>
+                    <button class="btn btn-secondary" style="width:100%;" onclick="loginWithGoogle()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                            style="width:18px; height:18px; vertical-align:middle; margin-right:0.5rem;">Entrar com
+                        Google
+                    </button>
                     <p id="loginError"
                         style="color:var(--accent-red); font-size:0.85rem; margin-top:0.5rem; display:none;"></p>
                 </div>
@@ -154,6 +214,8 @@
                             <a href="prova.html" class="btn btn-secondary">📝 Fazer Prova</a>
                             <button class="btn btn-danger" onclick="doLogout()">Sair</button>
                         </div>
+                        <button id="btnGoogleAuth" class="btn btn-secondary"
+                            style="width:100%; margin-top:0.75rem; display:none;">🔗 Sincronizar Google</button>
                     </div>
                 </div>
             </div>
@@ -162,8 +224,9 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="firebase.js"></script>
+    <script src="js/firebase.js"></script>
     <script>
         // ========== TAB SWITCHING ==========
         function switchRegTab(tab) {
@@ -307,6 +370,18 @@
                 document.getElementById('loggedInCargo').textContent = getNivelLabel(user.cargo, user.nivel);
                 document.getElementById('loggedInProfileLink').href = `perfil.html?id=${user.id}`;
 
+                // Show Google sync button if not linked
+                const btnGoogle = document.getElementById('btnGoogleAuth');
+                if (btnGoogle) {
+                    if (!user.googleUid) {
+                        btnGoogle.textContent = '🔗 Sincronizar Google';
+                        btnGoogle.onclick = () => linkWithGoogle(user.id, false);
+                        btnGoogle.style.display = 'block';
+                    } else {
+                        btnGoogle.style.display = 'none';
+                    }
+                }
+
                 showToast(`Bem-vindo, ${user.nome}!`);
             } catch (err) {
                 errorEl.textContent = 'Erro: ' + err.message;
@@ -324,10 +399,10 @@
         }
 
         // Check existing session
-        const session = getSession();
-        if (session && session.userId) {
+        const savedSession = getSession();
+        if (savedSession && savedSession.userId && !savedSession.isAdmin) {
             (async () => {
-                const user = await getUsuario(session.userId);
+                const user = await getUsuario(savedSession.userId);
                 if (user) {
                     switchRegTab('login');
                     document.querySelector('#tab-login .card').style.display = 'none';
@@ -335,6 +410,17 @@
                     document.getElementById('loggedInName').textContent = user.nome;
                     document.getElementById('loggedInCargo').textContent = getNivelLabel(user.cargo, user.nivel);
                     document.getElementById('loggedInProfileLink').href = `perfil.html?id=${user.id}`;
+                    // Show/update the Google sync button
+                    const btnGoogle = document.getElementById('btnGoogleAuth');
+                    if (btnGoogle) {
+                        if (!user.googleUid) {
+                            btnGoogle.textContent = '🔗 Sincronizar Google';
+                            btnGoogle.onclick = () => linkWithGoogle(user.id, false);
+                            btnGoogle.style.display = 'block';
+                        } else {
+                            btnGoogle.style.display = 'none';
+                        }
+                    }
                 }
             })();
         }
