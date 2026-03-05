@@ -4,7 +4,7 @@
 //   https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCPk1DnU5HZVDH-JCj7M6klb6GC9vi7Kto",
+    apiKey: "",
     authDomain: "judi-50ed0.firebaseapp.com",
     projectId: "judi-50ed0",
     storageBucket: "judi-50ed0.firebasestorage.app",
@@ -425,3 +425,4 @@ function getLevelPermissions(nivel) {
     };
     return perms[nivel] || perms.candidato;
 }
+
